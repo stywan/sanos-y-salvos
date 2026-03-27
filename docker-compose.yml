@@ -1,0 +1,98 @@
+version: '3.9'
+
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: sanossalvos
+      POSTGRES_PASSWORD: sanossalvos
+      POSTGRES_DB: sanossalvos
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ms-user-auth
+      - ms-pet-management
+      - ms-geolocation
+      - ms-matching-engine
+      - ms-notification
+      - bff
+
+  ms-user-auth:
+    build: ./ms-user-auth
+    ports:
+      - "8084:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sanossalvos
+      SPRING_DATASOURCE_USERNAME: sanossalvos
+      SPRING_DATASOURCE_PASSWORD: sanossalvos
+    depends_on:
+      - postgres
+
+  ms-pet-management:
+    build: ./ms-pet-management
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sanossalvos
+      SPRING_DATASOURCE_USERNAME: sanossalvos
+      SPRING_DATASOURCE_PASSWORD: sanossalvos
+    depends_on:
+      - postgres
+
+  ms-geolocation:
+    build: ./ms-geolocation
+    ports:
+      - "8082:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sanossalvos
+      SPRING_DATASOURCE_USERNAME: sanossalvos
+      SPRING_DATASOURCE_PASSWORD: sanossalvos
+    depends_on:
+      - postgres
+
+  ms-matching-engine:
+    build: ./ms-matching-engine
+    ports:
+      - "8083:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sanossalvos
+      SPRING_DATASOURCE_USERNAME: sanossalvos
+      SPRING_DATASOURCE_PASSWORD: sanossalvos
+    depends_on:
+      - postgres
+
+  ms-notification:
+    build: ./ms-notification
+    ports:
+      - "8085:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sanossalvos
+      SPRING_DATASOURCE_USERNAME: sanossalvos
+      SPRING_DATASOURCE_PASSWORD: sanossalvos
+    depends_on:
+      - postgres
+
+  bff:
+    build: ./bff
+    ports:
+      - "8086:8080"
+    depends_on:
+      - api-gateway
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - bff
+
+volumes:
+  postgres_data:
