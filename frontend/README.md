@@ -1,16 +1,36 @@
-# React + Vite
+# frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interfaz de usuario construida con React 18 + Vite.
 
-Currently, two official plugins are available:
+## Responsabilidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Formulario de reporte de mascota perdida/encontrada
+- Listado y búsqueda de mascotas
+- Panel de coincidencias del usuario
+- Login / registro
 
-## React Compiler
+## Comunicación
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+El frontend habla **solo con el BFF** (`http://localhost:8086/api/bff/`).  
+Nunca llama directamente a los microservicios.
 
-## Expanding the ESLint configuration
+## Correr localmente
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+npm run dev    # http://localhost:5173
+```
+
+## Build para producción
+
+```bash
+npm run build   # genera /dist
+```
+
+## Variables de entorno
+
+Crea un archivo `.env.local` en esta carpeta:
+
+```
+VITE_API_URL=http://localhost:8086
+```

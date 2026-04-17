@@ -32,3 +32,14 @@
 # Logs
 **/*.log
 **/logs/
+
+# Coverage / tests output
+**/coverage/
+**/test-output/
+
+# OS
+Thumbs.db
+desktop.ini
+
+# El .env.example SÍ se versiona
+!**/.env.example
