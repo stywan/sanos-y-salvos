@@ -41,5 +41,9 @@
 Thumbs.db
 desktop.ini
 
+# Postman Git Sync (se gestiona localmente, no en el repo)
+postman/
+.postman/
+
 # El .env.example SÍ se versiona
 !**/.env.example
