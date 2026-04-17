@@ -59,9 +59,9 @@ jobs:
           SPRING_DATASOURCE_USERNAME: sanossalvos
           SPRING_DATASOURCE_PASSWORD: sanossalvos
           JWT_SECRET: ci_secret_no_usar_en_produccion_minimo_256_bits_xxxxxxxxxxx
-        # "test jacoco:report" genera el reporte de cobertura sin forzar el umbral del 60%.
-        # Cuando haya código real (Parcial 3), cambiar a "verify" para activar el check.
-        run: ./mvnw test jacoco:report --no-transfer-progress
+        # "test" dispara automáticamente prepare-agent + report de JaCoCo (atados a la fase test).
+        # Sin "verify" no se ejecuta el check del 60% — se activa en Parcial 3 cambiando a "verify".
+        run: ./mvnw test --no-transfer-progress
 
       - name: Subir reporte JaCoCo
         uses: actions/upload-artifact@v4
@@ -155,7 +155,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          ./mvnw test jacoco:report sonar:sonar \
+          ./mvnw test org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             --no-transfer-progress \
             -Dsonar.organization=sanos-y-salvos \
             -Dsonar.projectKey=sanos-y-salvos-${{ matrix.service }} \
