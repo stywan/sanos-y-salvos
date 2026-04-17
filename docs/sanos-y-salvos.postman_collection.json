@@ -1,0 +1,233 @@
+{
+  "info": {
+    "name": "Sanos y Salvos API",
+    "description": "Colección de endpoints del sistema Sanos y Salvos",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8084",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "ms-user-auth",
+      "item": [
+        {
+          "name": "Register - PERSONA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) {",
+                  "    pm.collectionVariables.set('token', json.token);",
+                  "    console.log('Token guardado:', json.token);",
+                  "}",
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Tiene token', () => pm.expect(json.token).to.exist);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"juan@ejemplo.com\",\n  \"password\": \"miPassword123\",\n  \"tipoUsuario\": \"PERSONA\",\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Pérez\",\n  \"telefono\": \"912345678\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Registra un usuario de tipo PERSONA. Guarda automáticamente el token."
+          }
+        },
+        {
+          "name": "Register - REFUGIO",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"refugio@esperanza.cl\",\n  \"password\": \"miPassword123\",\n  \"tipoUsuario\": \"REFUGIO\",\n  \"nombreOrganizacion\": \"Refugio Esperanza\",\n  \"descripcion\": \"Refugio sin fines de lucro\",\n  \"direccion\": \"Av. Principal 456, Santiago\",\n  \"telefono\": \"225556789\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Registra un usuario de tipo REFUGIO."
+          }
+        },
+        {
+          "name": "Register - VETERINARIA",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"veterinaria@salud.cl\",\n  \"password\": \"miPassword123\",\n  \"tipoUsuario\": \"VETERINARIA\",\n  \"nombreOrganizacion\": \"Clínica Veterinaria PetSalud\",\n  \"descripcion\": \"Atención integral de mascotas\",\n  \"direccion\": \"Los Leones 789, Providencia\",\n  \"telefono\": \"226667890\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Register - MUNICIPALIDAD",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"muni@lascondes.cl\",\n  \"password\": \"miPassword123\",\n  \"tipoUsuario\": \"MUNICIPALIDAD\",\n  \"nombreOrganizacion\": \"Municipalidad de Las Condes\",\n  \"descripcion\": \"Municipio colaborador del programa\",\n  \"direccion\": \"Av. Apoquindo 3000\",\n  \"telefono\": \"227778901\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) {",
+                  "    pm.collectionVariables.set('token', json.token);",
+                  "    console.log('Token guardado:', json.token);",
+                  "}",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiene token', () => pm.expect(json.token).to.exist);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"juan@ejemplo.com\",\n  \"password\": \"miPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login. Guarda automáticamente el token en la variable {{token}}."
+          }
+        },
+        {
+          "name": "Get Me (requiere token)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Retorna los datos del usuario autenticado. Usa el token guardado automáticamente."
+          }
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/actuator/health",
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "health"]
+            },
+            "description": "Verifica que el servicio está levantado."
+          }
+        },
+        {
+          "name": "Register - Email duplicado (error 409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"juan@ejemplo.com\",\n  \"password\": \"miPassword123\",\n  \"tipoUsuario\": \"PERSONA\",\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Pérez\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Debe retornar 409 Conflict si el email ya existe."
+          }
+        },
+        {
+          "name": "Login - Credenciales inválidas (error 401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"juan@ejemplo.com\",\n  \"password\": \"contraseniaWRONG\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Debe retornar 401 Unauthorized."
+          }
+        },
+        {
+          "name": "Get Me - Sin token (error 403)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Debe retornar 403 Forbidden sin token."
+          }
+        }
+      ]
+    }
+  ]
+}
