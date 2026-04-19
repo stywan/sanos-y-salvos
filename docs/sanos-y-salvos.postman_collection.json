@@ -6,12 +6,22 @@
   },
   "variable": [
     {
-      "key": "base_url",
+      "key": "auth_url",
       "value": "http://localhost:8084",
       "type": "string"
     },
     {
+      "key": "pet_url",
+      "value": "http://localhost:8081",
+      "type": "string"
+    },
+    {
       "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "reporte_id",
       "value": "",
       "type": "string"
     }
@@ -41,16 +51,14 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"juan@ejemplo.com\",\n  \"password\": \"miPassword123\",\n  \"tipoUsuario\": \"PERSONA\",\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Pérez\",\n  \"telefono\": \"912345678\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/auth/register",
-              "host": ["{{base_url}}"],
+              "raw": "{{auth_url}}/api/auth/register",
+              "host": ["{{auth_url}}"],
               "path": ["api", "auth", "register"]
             },
             "description": "Registra un usuario de tipo PERSONA. Guarda automáticamente el token."
@@ -60,35 +68,30 @@
           "name": "Register - REFUGIO",
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"refugio@esperanza.cl\",\n  \"password\": \"miPassword123\",\n  \"tipoUsuario\": \"REFUGIO\",\n  \"nombreOrganizacion\": \"Refugio Esperanza\",\n  \"descripcion\": \"Refugio sin fines de lucro\",\n  \"direccion\": \"Av. Principal 456, Santiago\",\n  \"telefono\": \"225556789\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/auth/register",
-              "host": ["{{base_url}}"],
+              "raw": "{{auth_url}}/api/auth/register",
+              "host": ["{{auth_url}}"],
               "path": ["api", "auth", "register"]
-            },
-            "description": "Registra un usuario de tipo REFUGIO."
+            }
           }
         },
         {
           "name": "Register - VETERINARIA",
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"veterinaria@salud.cl\",\n  \"password\": \"miPassword123\",\n  \"tipoUsuario\": \"VETERINARIA\",\n  \"nombreOrganizacion\": \"Clínica Veterinaria PetSalud\",\n  \"descripcion\": \"Atención integral de mascotas\",\n  \"direccion\": \"Los Leones 789, Providencia\",\n  \"telefono\": \"226667890\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/auth/register",
-              "host": ["{{base_url}}"],
+              "raw": "{{auth_url}}/api/auth/register",
+              "host": ["{{auth_url}}"],
               "path": ["api", "auth", "register"]
             }
           }
@@ -97,16 +100,14 @@
           "name": "Register - MUNICIPALIDAD",
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"muni@lascondes.cl\",\n  \"password\": \"miPassword123\",\n  \"tipoUsuario\": \"MUNICIPALIDAD\",\n  \"nombreOrganizacion\": \"Municipalidad de Las Condes\",\n  \"descripcion\": \"Municipio colaborador del programa\",\n  \"direccion\": \"Av. Apoquindo 3000\",\n  \"telefono\": \"227778901\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/auth/register",
-              "host": ["{{base_url}}"],
+              "raw": "{{auth_url}}/api/auth/register",
+              "host": ["{{auth_url}}"],
               "path": ["api", "auth", "register"]
             }
           }
@@ -132,37 +133,29 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"juan@ejemplo.com\",\n  \"password\": \"miPassword123\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/auth/login",
-              "host": ["{{base_url}}"],
+              "raw": "{{auth_url}}/api/auth/login",
+              "host": ["{{auth_url}}"],
               "path": ["api", "auth", "login"]
             },
-            "description": "Login. Guarda automáticamente el token en la variable {{token}}."
+            "description": "Login. Guarda automáticamente el token en {{token}}."
           }
         },
         {
           "name": "Get Me (requiere token)",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
-              "raw": "{{base_url}}/api/auth/me",
-              "host": ["{{base_url}}"],
+              "raw": "{{auth_url}}/api/auth/me",
+              "host": ["{{auth_url}}"],
               "path": ["api", "auth", "me"]
-            },
-            "description": "Retorna los datos del usuario autenticado. Usa el token guardado automáticamente."
+            }
           }
         },
         {
@@ -170,27 +163,24 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{base_url}}/actuator/health",
-              "host": ["{{base_url}}"],
+              "raw": "{{auth_url}}/actuator/health",
+              "host": ["{{auth_url}}"],
               "path": ["actuator", "health"]
-            },
-            "description": "Verifica que el servicio está levantado."
+            }
           }
         },
         {
           "name": "Register - Email duplicado (error 409)",
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"juan@ejemplo.com\",\n  \"password\": \"miPassword123\",\n  \"tipoUsuario\": \"PERSONA\",\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Pérez\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/auth/register",
-              "host": ["{{base_url}}"],
+              "raw": "{{auth_url}}/api/auth/register",
+              "host": ["{{auth_url}}"],
               "path": ["api", "auth", "register"]
             },
             "description": "Debe retornar 409 Conflict si el email ya existe."
@@ -200,16 +190,14 @@
           "name": "Login - Credenciales inválidas (error 401)",
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"juan@ejemplo.com\",\n  \"password\": \"contraseniaWRONG\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/auth/login",
-              "host": ["{{base_url}}"],
+              "raw": "{{auth_url}}/api/auth/login",
+              "host": ["{{auth_url}}"],
               "path": ["api", "auth", "login"]
             },
             "description": "Debe retornar 401 Unauthorized."
@@ -220,11 +208,452 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{base_url}}/api/auth/me",
-              "host": ["{{base_url}}"],
+              "raw": "{{auth_url}}/api/auth/me",
+              "host": ["{{auth_url}}"],
               "path": ["api", "auth", "me"]
             },
             "description": "Debe retornar 403 Forbidden sin token."
+          }
+        }
+      ]
+    },
+    {
+      "name": "ms-pet-management",
+      "item": [
+        {
+          "name": "Catálogos",
+          "item": [
+            {
+              "name": "Listar especies",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "pm.test('Es un arreglo', () => pm.expect(pm.response.json()).to.be.an('array'));",
+                      "pm.test('Tiene al menos una especie', () => pm.expect(pm.response.json().length).to.be.above(0));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{pet_url}}/api/pets/especies",
+                  "host": ["{{pet_url}}"],
+                  "path": ["api", "pets", "especies"]
+                },
+                "description": "Público. Retorna lista de especies (Perro, Gato, etc.) para el dropdown del formulario."
+              }
+            },
+            {
+              "name": "Listar razas por especie (Perro = 1)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "pm.test('Es un arreglo', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{pet_url}}/api/pets/razas?especieId=1",
+                  "host": ["{{pet_url}}"],
+                  "path": ["api", "pets", "razas"],
+                  "query": [{ "key": "especieId", "value": "1" }]
+                },
+                "description": "Público. Razas filtradas por especie. Cambia especieId según la especie seleccionada."
+              }
+            },
+            {
+              "name": "Listar colores",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "pm.test('Tiene colores', () => pm.expect(pm.response.json().length).to.be.above(0));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{pet_url}}/api/pets/colores",
+                  "host": ["{{pet_url}}"],
+                  "path": ["api", "pets", "colores"]
+                },
+                "description": "Público. Lista todos los colores disponibles para seleccionar en el formulario."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Fotos",
+          "item": [
+            {
+              "name": "Subir foto (multipart)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "var json = pm.response.json();",
+                      "pm.test('Tiene URL', () => pm.expect(json.url).to.exist);",
+                      "if (json.url) {",
+                      "    pm.collectionVariables.set('foto_url', json.url);",
+                      "    console.log('URL foto guardada:', json.url);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "description": "Selecciona una imagen JPG o PNG (máx 5MB)"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{pet_url}}/api/pets/fotos/upload",
+                  "host": ["{{pet_url}}"],
+                  "path": ["api", "pets", "fotos", "upload"]
+                },
+                "description": "Sube una foto a MinIO. Guarda automáticamente la URL en {{foto_url}}.\n\nFLUJO:\n1. Ejecutar esta request primero para obtener la URL\n2. Usar esa URL en fotosUrls[] al crear el reporte"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reportes",
+          "item": [
+            {
+              "name": "Crear reporte PERDIDO",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                      "var json = pm.response.json();",
+                      "pm.test('Tiene ID', () => pm.expect(json.id).to.exist);",
+                      "pm.test('Estado ACTIVO', () => pm.expect(json.estado).to.eql('ACTIVO'));",
+                      "pm.test('Tipo PERDIDO', () => pm.expect(json.tipo).to.eql('PERDIDO'));",
+                      "if (json.id) {",
+                      "    pm.collectionVariables.set('reporte_id', json.id);",
+                      "    console.log('reporte_id guardado:', json.id);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tipo\": \"PERDIDO\",\n  \"fechaSuceso\": \"2026-04-15\",\n  \"especieId\": 1,\n  \"razaId\": 3,\n  \"nombreMascota\": \"Max\",\n  \"genero\": \"MACHO\",\n  \"descripcionCaracteristicas\": \"Mancha en forma de corazón en lomo derecho. Collar azul oscuro sin placa.\",\n  \"colorIds\": [1, 3],\n  \"latitud\": -33.4569,\n  \"longitud\": -70.6483,\n  \"direccionReferencia\": \"Parque Forestal, frente a fuente de agua\",\n  \"comuna\": \"Santiago\",\n  \"nombreContacto\": \"Carolina Ramírez\",\n  \"telefonoContacto\": \"+56912345678\",\n  \"emailContacto\": \"carolina@ejemplo.com\",\n  \"telefonoVisible\": true,\n  \"fotosUrls\": []\n}"
+                },
+                "url": {
+                  "raw": "{{pet_url}}/api/pets/reportes",
+                  "host": ["{{pet_url}}"],
+                  "path": ["api", "pets", "reportes"]
+                },
+                "description": "Crea un reporte de mascota PERDIDA. Guarda automáticamente {{reporte_id}}.\n\nNOTA: especieId=1 (Perro), razaId=3 (Beagle). Ajusta según los IDs que devuelvan los catálogos."
+              }
+            },
+            {
+              "name": "Crear reporte ENCONTRADO",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                      "var json = pm.response.json();",
+                      "pm.test('Tipo ENCONTRADO', () => pm.expect(json.tipo).to.eql('ENCONTRADO'));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tipo\": \"ENCONTRADO\",\n  \"fechaSuceso\": \"2026-04-19\",\n  \"especieId\": 1,\n  \"nombreMascota\": null,\n  \"genero\": \"DESCONOCIDO\",\n  \"descripcionCaracteristicas\": \"Perro café con manchas blancas, sin collar. Encontrado en parque.\",\n  \"colorIds\": [3, 2],\n  \"latitud\": -33.4372,\n  \"longitud\": -70.6506,\n  \"direccionReferencia\": \"Parque O'Higgins, entrada norte\",\n  \"comuna\": \"Santiago\",\n  \"nombreContacto\": \"Pedro González\",\n  \"telefonoContacto\": \"+56987654321\",\n  \"emailContacto\": \"pedro@ejemplo.com\",\n  \"telefonoVisible\": false,\n  \"fotosUrls\": []\n}"
+                },
+                "url": {
+                  "raw": "{{pet_url}}/api/pets/reportes",
+                  "host": ["{{pet_url}}"],
+                  "path": ["api", "pets", "reportes"]
+                },
+                "description": "Crea un reporte de mascota ENCONTRADA. Sin nombre (se desconoce), teléfono oculto."
+              }
+            },
+            {
+              "name": "Listar todos los reportes",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "pm.test('Es un arreglo', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{pet_url}}/api/pets/reportes",
+                  "host": ["{{pet_url}}"],
+                  "path": ["api", "pets", "reportes"]
+                },
+                "description": "Público. Lista todos los reportes sin filtros."
+              }
+            },
+            {
+              "name": "Listar reportes PERDIDO + ACTIVO",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "var json = pm.response.json();",
+                      "pm.test('Todos son PERDIDO', () => {",
+                      "    json.forEach(r => pm.expect(r.tipo).to.eql('PERDIDO'));",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{pet_url}}/api/pets/reportes?tipo=PERDIDO&estado=ACTIVO",
+                  "host": ["{{pet_url}}"],
+                  "path": ["api", "pets", "reportes"],
+                  "query": [
+                    { "key": "tipo", "value": "PERDIDO" },
+                    { "key": "estado", "value": "ACTIVO" }
+                  ]
+                },
+                "description": "Público. Filtra solo reportes de mascotas perdidas y activas."
+              }
+            },
+            {
+              "name": "Obtener reporte por ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "var json = pm.response.json();",
+                      "pm.test('ID coincide', () => pm.expect(json.id.toString()).to.eql(pm.collectionVariables.get('reporte_id').toString()));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{pet_url}}/api/pets/reportes/{{reporte_id}}",
+                  "host": ["{{pet_url}}"],
+                  "path": ["api", "pets", "reportes", "{{reporte_id}}"]
+                },
+                "description": "Público. Detalle completo del reporte. Usa {{reporte_id}} guardado al crear."
+              }
+            },
+            {
+              "name": "Mis reportes (requiere token)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "pm.test('Es un arreglo', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": {
+                  "raw": "{{pet_url}}/api/pets/reportes/mis-reportes",
+                  "host": ["{{pet_url}}"],
+                  "path": ["api", "pets", "reportes", "mis-reportes"]
+                },
+                "description": "Retorna solo los reportes del usuario autenticado."
+              }
+            },
+            {
+              "name": "Cambiar estado a RESUELTO",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "pm.test('Estado RESUELTO', () => pm.expect(pm.response.json().estado).to.eql('RESUELTO'));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"estado\": \"RESUELTO\"\n}"
+                },
+                "url": {
+                  "raw": "{{pet_url}}/api/pets/reportes/{{reporte_id}}/estado",
+                  "host": ["{{pet_url}}"],
+                  "path": ["api", "pets", "reportes", "{{reporte_id}}", "estado"]
+                },
+                "description": "Solo el dueño puede cambiar el estado. Usa {{reporte_id}} y {{token}}."
+              }
+            },
+            {
+              "name": "Crear reporte - Sin token (error 403)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 403', () => pm.response.to.have.status(403));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tipo\": \"PERDIDO\",\n  \"especieId\": 1\n}"
+                },
+                "url": {
+                  "raw": "{{pet_url}}/api/pets/reportes",
+                  "host": ["{{pet_url}}"],
+                  "path": ["api", "pets", "reportes"]
+                },
+                "description": "Debe retornar 403 al intentar crear un reporte sin autenticación."
+              }
+            },
+            {
+              "name": "Crear reporte - Especie inválida (error 400)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tipo\": \"PERDIDO\",\n  \"fechaSuceso\": \"2026-04-15\",\n  \"especieId\": 9999,\n  \"genero\": \"MACHO\",\n  \"nombreContacto\": \"Test\",\n  \"telefonoContacto\": \"+56912345678\",\n  \"emailContacto\": \"test@test.com\",\n  \"telefonoVisible\": true\n}"
+                },
+                "url": {
+                  "raw": "{{pet_url}}/api/pets/reportes",
+                  "host": ["{{pet_url}}"],
+                  "path": ["api", "pets", "reportes"]
+                },
+                "description": "Debe retornar 400 cuando el especieId no existe en la base de datos."
+              }
+            },
+            {
+              "name": "Obtener reporte - ID inexistente (error 404)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 404', () => pm.response.to.have.status(404));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{pet_url}}/api/pets/reportes/99999",
+                  "host": ["{{pet_url}}"],
+                  "path": ["api", "pets", "reportes", "99999"]
+                },
+                "description": "Debe retornar 404 cuando el reporte no existe."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{pet_url}}/actuator/health",
+              "host": ["{{pet_url}}"],
+              "path": ["actuator", "health"]
+            },
+            "description": "Verifica que ms-pet-management está levantado."
           }
         }
       ]
