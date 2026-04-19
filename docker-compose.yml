@@ -20,6 +20,27 @@ services:
       retries: 5
 
   # ─────────────────────────────────────────────
+  # Almacenamiento de objetos (fotos de mascotas)
+  # Consola web: http://localhost:9001
+  # ─────────────────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: sanossalvos
+      MINIO_ROOT_PASSWORD: sanossalvos123
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────────
   # Microservicios
   # ─────────────────────────────────────────────
   ms-user-auth:
@@ -44,8 +65,15 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sanossalvos
       SPRING_DATASOURCE_USERNAME: sanossalvos
       SPRING_DATASOURCE_PASSWORD: sanossalvos
+      JWT_SECRET: clave_local_desarrollo_no_usar_en_produccion
+      MINIO_URL: http://minio:9000
+      MINIO_ACCESS_KEY: sanossalvos
+      MINIO_SECRET_KEY: sanossalvos123
+      MINIO_BUCKET: fotos-mascotas
     depends_on:
       postgres:
+        condition: service_healthy
+      minio:
         condition: service_healthy
 
   ms-geolocation:
@@ -142,3 +170,4 @@ services:
 
 volumes:
   postgres_data:
+  minio_data:
