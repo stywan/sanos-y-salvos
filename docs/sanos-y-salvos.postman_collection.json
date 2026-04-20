@@ -16,6 +16,16 @@
       "type": "string"
     },
     {
+      "key": "geo_url",
+      "value": "http://localhost:8082",
+      "type": "string"
+    },
+    {
+      "key": "zona_id",
+      "value": "",
+      "type": "string"
+    },
+    {
       "key": "token",
       "value": "",
       "type": "string"
@@ -654,6 +664,239 @@
               "path": ["actuator", "health"]
             },
             "description": "Verifica que ms-pet-management está levantado."
+          }
+        }
+      ]
+    },
+    {
+      "name": "ms-geolocation",
+      "item": [
+        {
+          "name": "Zonas de búsqueda",
+          "item": [
+            {
+              "name": "POST Crear zona",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "if (json.id) pm.collectionVariables.set('zona_id', json.id);",
+                      "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                      "pm.test('Tiene id', () => pm.expect(json.id).to.exist);",
+                      "pm.test('Zona activa', () => pm.expect(json.activa).to.be.true);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Cerca de casa\",\n  \"latitudCentro\": -33.4372,\n  \"longitudCentro\": -70.6506,\n  \"radioKm\": 5.0\n}"
+                },
+                "url": {
+                  "raw": "{{geo_url}}/api/geo/zonas",
+                  "host": ["{{geo_url}}"],
+                  "path": ["api", "geo", "zonas"]
+                },
+                "description": "Crea una zona de búsqueda. El zona_id se guarda automáticamente."
+              }
+            },
+            {
+              "name": "GET Mis zonas",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "pm.test('Es array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+                "url": {
+                  "raw": "{{geo_url}}/api/geo/zonas/mis-zonas",
+                  "host": ["{{geo_url}}"],
+                  "path": ["api", "geo", "zonas", "mis-zonas"]
+                },
+                "description": "Lista las zonas activas del usuario autenticado."
+              }
+            },
+            {
+              "name": "DELETE Desactivar zona",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 204', () => pm.response.to.have.status(204));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+                "url": {
+                  "raw": "{{geo_url}}/api/geo/zonas/{{zona_id}}",
+                  "host": ["{{geo_url}}"],
+                  "path": ["api", "geo", "zonas", "{{zona_id}}"]
+                },
+                "description": "Desactiva la zona guardada en zona_id (soft delete)."
+              }
+            },
+            {
+              "name": "GET Zonas cercanas a un punto (interno)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "pm.test('Es array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{geo_url}}/api/geo/zonas/cercanas?lat=-33.45&lon=-70.65",
+                  "host": ["{{geo_url}}"],
+                  "path": ["api", "geo", "zonas", "cercanas"],
+                  "query": [
+                    { "key": "lat", "value": "-33.45" },
+                    { "key": "lon", "value": "-70.65" }
+                  ]
+                },
+                "description": "Devuelve zonas activas cuyo radio contiene el punto. Sin JWT (uso interno de matching engine)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Proximidad",
+          "item": [
+            {
+              "name": "POST Filtrar reportes cercanos",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                      "pm.test('Es array', () => pm.expect(json).to.be.an('array'));",
+                      "pm.test('Tiene distanciaKm', () => {",
+                      "  if (json.length > 0) pm.expect(json[0].distanciaKm).to.exist;",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"latitud\": -33.45,\n  \"longitud\": -70.65,\n  \"radioKm\": 10.0,\n  \"puntos\": [\n    { \"id\": 1, \"latitud\": -33.46, \"longitud\": -70.66 },\n    { \"id\": 2, \"latitud\": -34.90, \"longitud\": -71.20 },\n    { \"id\": 3, \"latitud\": -33.47, \"longitud\": -70.67 }\n  ]\n}"
+                },
+                "url": {
+                  "raw": "{{geo_url}}/api/geo/filtrar-cercanos",
+                  "host": ["{{geo_url}}"],
+                  "path": ["api", "geo", "filtrar-cercanos"]
+                },
+                "description": "Filtra puntos (reportes) dentro del radio. Sin JWT. Devuelve los cercanos ordenados por distancia."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Errores",
+          "item": [
+            {
+              "name": "POST Crear zona sin token (403)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 403', () => pm.response.to.have.status(403));"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Sin token\",\n  \"latitudCentro\": -33.45,\n  \"longitudCentro\": -70.65,\n  \"radioKm\": 5.0\n}"
+                },
+                "url": {
+                  "raw": "{{geo_url}}/api/geo/zonas",
+                  "host": ["{{geo_url}}"],
+                  "path": ["api", "geo", "zonas"]
+                },
+                "description": "Debe devolver 403 al no enviar JWT."
+              }
+            },
+            {
+              "name": "DELETE Zona de otro usuario (400)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status 400 o 404', () => {",
+                      "  pm.expect([400, 404]).to.include(pm.response.code);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+                "url": {
+                  "raw": "{{geo_url}}/api/geo/zonas/99999",
+                  "host": ["{{geo_url}}"],
+                  "path": ["api", "geo", "zonas", "99999"]
+                },
+                "description": "Zona inexistente → 404."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{geo_url}}/actuator/health",
+              "host": ["{{geo_url}}"],
+              "path": ["actuator", "health"]
+            },
+            "description": "Verifica que ms-geolocation está levantado."
           }
         }
       ]
