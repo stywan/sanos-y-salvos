@@ -21,6 +21,16 @@
       "type": "string"
     },
     {
+      "key": "notification_url",
+      "value": "http://localhost:8085",
+      "type": "string"
+    },
+    {
+      "key": "notificacion_id",
+      "value": "",
+      "type": "string"
+    },
+    {
       "key": "zona_id",
       "value": "",
       "type": "string"
@@ -897,6 +907,156 @@
               "path": ["actuator", "health"]
             },
             "description": "Verifica que ms-geolocation está levantado."
+          }
+        }
+      ]
+    },
+    {
+      "name": "ms-notification",
+      "item": [
+        {
+          "name": "POST Crear notificación (interno)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('notificacion_id', json.id);",
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('No leída', () => pm.expect(json.leida).to.be.false);",
+                  "pm.test('Tiene tipo', () => pm.expect(json.tipo).to.exist);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": 1,\n  \"tipo\": \"MATCH_ENCONTRADO\",\n  \"titulo\": \"¡Posible mascota encontrada!\",\n  \"mensaje\": \"Se encontró una mascota cerca de tu zona que podría ser la tuya. Revisa el reporte.\",\n  \"reporteId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{notification_url}}/api/notificaciones",
+              "host": ["{{notification_url}}"],
+              "path": ["api", "notificaciones"]
+            },
+            "description": "Crea una notificación (sin JWT). Simula llamada interna del matching engine. El notificacion_id se guarda automáticamente."
+          }
+        },
+        {
+          "name": "GET Mis notificaciones",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Es array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{notification_url}}/api/notificaciones/mis-notificaciones",
+              "host": ["{{notification_url}}"],
+              "path": ["api", "notificaciones", "mis-notificaciones"]
+            },
+            "description": "Lista las notificaciones del usuario autenticado, de más reciente a más antigua."
+          }
+        },
+        {
+          "name": "GET Contador no leídas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiene noLeidas', () => pm.expect(pm.response.json().noLeidas).to.be.a('number'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{notification_url}}/api/notificaciones/no-leidas/count",
+              "host": ["{{notification_url}}"],
+              "path": ["api", "notificaciones", "no-leidas", "count"]
+            },
+            "description": "Devuelve el contador de notificaciones no leídas (para la campana del frontend)."
+          }
+        },
+        {
+          "name": "PATCH Marcar como leída",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Leída = true', () => pm.expect(pm.response.json().leida).to.be.true);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{notification_url}}/api/notificaciones/{{notificacion_id}}/leer",
+              "host": ["{{notification_url}}"],
+              "path": ["api", "notificaciones", "{{notificacion_id}}", "leer"]
+            },
+            "description": "Marca la notificación como leída. Solo el dueño puede hacerlo."
+          }
+        },
+        {
+          "name": "PATCH Leer todas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiene actualizadas', () => pm.expect(pm.response.json().actualizadas).to.be.a('number'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{notification_url}}/api/notificaciones/leer-todas",
+              "host": ["{{notification_url}}"],
+              "path": ["api", "notificaciones", "leer-todas"]
+            },
+            "description": "Marca todas las notificaciones del usuario como leídas. Devuelve cuántas se actualizaron."
+          }
+        },
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{notification_url}}/actuator/health",
+              "host": ["{{notification_url}}"],
+              "path": ["actuator", "health"]
+            },
+            "description": "Verifica que ms-notification está levantado."
           }
         }
       ]
