@@ -900,6 +900,141 @@
           }
         }
       ]
+    },
+    {
+      "name": "ms-matching-engine",
+      "item": [
+        {
+          "name": "POST Buscar matches",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Es array', () => pm.expect(pm.response.json()).to.be.an('array'));",
+                  "var json = pm.response.json();",
+                  "if (json.length > 0) {",
+                  "  pm.collectionVariables.set('match_id', json[0].id);",
+                  "  pm.test('Tiene puntuacion', () => pm.expect(json[0].puntuacion).to.be.a('number'));",
+                  "  pm.test('Estado PENDIENTE', () => pm.expect(json[0].estado).to.eql('PENDIENTE'));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reporteId\": {{reporte_id}}\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/api/matching/buscar",
+              "host": ["http://localhost:8083"],
+              "path": ["api", "matching", "buscar"]
+            },
+            "description": "Busca matches para el reporte_id guardado. El match_id se guarda automáticamente."
+          }
+        },
+        {
+          "name": "GET Matches de un reporte",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Es array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/api/matching/matches?reporteId={{reporte_id}}",
+              "host": ["http://localhost:8083"],
+              "path": ["api", "matching", "matches"],
+              "query": [{ "key": "reporteId", "value": "{{reporte_id}}" }]
+            },
+            "description": "Lista los matches del reporte, ordenados de mayor a menor puntuación."
+          }
+        },
+        {
+          "name": "PATCH Confirmar match",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Estado CONFIRMADO', () => pm.expect(pm.response.json().estado).to.eql('CONFIRMADO'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"estado\": \"CONFIRMADO\" }"
+            },
+            "url": {
+              "raw": "http://localhost:8083/api/matching/matches/{{match_id}}/estado",
+              "host": ["http://localhost:8083"],
+              "path": ["api", "matching", "matches", "{{match_id}}", "estado"]
+            }
+          }
+        },
+        {
+          "name": "PATCH Descartar match",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Estado DESCARTADO', () => pm.expect(pm.response.json().estado).to.eql('DESCARTADO'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"estado\": \"DESCARTADO\" }"
+            },
+            "url": {
+              "raw": "http://localhost:8083/api/matching/matches/{{match_id}}/estado",
+              "host": ["http://localhost:8083"],
+              "path": ["api", "matching", "matches", "{{match_id}}", "estado"]
+            }
+          }
+        },
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/actuator/health",
+              "host": ["http://localhost:8083"],
+              "path": ["actuator", "health"]
+            },
+            "description": "Verifica que ms-matching-engine está levantado."
+          }
+        }
+      ]
     }
   ]
 }
