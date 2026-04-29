@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main, develop ]
 
+# Opt-in a Node.js 24 para todas las GitHub Actions del workflow
+# (evita warnings de deprecación de Node 20 antes de junio 2026)
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   # ─────────────────────────────────────────────
   # Build y tests de cada microservicio Java
@@ -45,10 +50,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Java 17
+      - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
           cache: maven
 
@@ -70,6 +75,7 @@ jobs:
           name: jacoco-${{ matrix.service }}
           path: ${{ matrix.service }}/target/site/jacoco/
           retention-days: 7
+          if-no-files-found: ignore
 
   # ─────────────────────────────────────────────
   # Build del frontend
@@ -138,10 +144,10 @@ jobs:
         with:
           fetch-depth: 0  # Requerido por SonarQube
 
-      - name: Set up Java 17
+      - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
           cache: maven
 
