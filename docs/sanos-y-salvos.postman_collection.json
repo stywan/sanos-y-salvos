@@ -21,6 +21,16 @@
       "type": "string"
     },
     {
+      "key": "notification_url",
+      "value": "http://localhost:8085",
+      "type": "string"
+    },
+    {
+      "key": "notificacion_id",
+      "value": "",
+      "type": "string"
+    },
+    {
       "key": "zona_id",
       "value": "",
       "type": "string"
