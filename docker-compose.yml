@@ -111,6 +111,11 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sanossalvos
       SPRING_DATASOURCE_USERNAME: sanossalvos
       SPRING_DATASOURCE_PASSWORD: sanossalvos
+      JWT_SECRET: clave_local_desarrollo_no_usar_en_produccion
+      MAIL_HOST: smtp.gmail.com
+      MAIL_PORT: 587
+      MAIL_USERNAME: correo@ejemplo.com
+      MAIL_PASSWORD: password
     depends_on:
       postgres:
         condition: service_healthy
