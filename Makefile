@@ -21,7 +21,7 @@ RESET  := \033[0m
 up: ## Inicia todos los servicios en segundo plano (construye si no existen las imágenes)
 	@echo "$(GREEN)▶ Iniciando Sanos y Salvos...$(RESET)"
 	$(COMPOSE) up -d
-	@echo "$(GREEN)✔ Sistema arriba. Usa 'make status' para ver el estado.$(RESET)"
+	@echo "$(GREEN)✔ Sistema arriba. MinIO crea el bucket automáticamente. Usa 'make status' para ver el estado.$(RESET)"
 
 .PHONY: down
 down: ## Detiene todos los servicios (conserva los datos)
