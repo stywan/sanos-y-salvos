@@ -67,4 +67,13 @@ public class ReporteController {
         Long usuarioId = (Long) auth.getCredentials();
         return ResponseEntity.ok(reporteService.cambiarEstado(id, request, usuarioId));
     }
+
+    /** Registra avistamiento de una mascota perdida — marca el reporte como RESUELTO (cualquier usuario autenticado) */
+    @PostMapping("/{id}/avistamiento")
+    public ResponseEntity<ReporteResponse> registrarAvistamiento(
+            @PathVariable Long id,
+            Authentication auth) {
+        Long usuarioId = (Long) auth.getCredentials();
+        return ResponseEntity.ok(reporteService.registrarAvistamiento(id, usuarioId));
+    }
 }
