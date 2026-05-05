@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: sanossalvos
       POSTGRES_DB: sanossalvos
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -41,6 +41,24 @@ services:
       retries: 5
 
   # ─────────────────────────────────────────────
+  # Inicialización de MinIO (crea el bucket si no existe)
+  # Se ejecuta una sola vez y termina.
+  # ─────────────────────────────────────────────
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 sanossalvos sanossalvos123 &&
+      mc mb --ignore-existing local/fotos-mascotas &&
+      mc anonymous set public local/fotos-mascotas &&
+      echo 'Bucket fotos-mascotas listo.'
+      "
+    restart: on-failure
+
+  # ─────────────────────────────────────────────
   # Microservicios
   # ─────────────────────────────────────────────
   ms-user-auth:
@@ -61,7 +79,7 @@ services:
       interval: 20s
       timeout: 5s
       retries: 5
-      start_period: 90s
+      start_period: 360s
 
   ms-pet-management:
     build: ./ms-pet-management
@@ -81,12 +99,14 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health || exit 1"]
       interval: 20s
       timeout: 5s
       retries: 5
-      start_period: 90s
+      start_period: 360s
 
   ms-geolocation:
     build: ./ms-geolocation
@@ -105,7 +125,7 @@ services:
       interval: 20s
       timeout: 5s
       retries: 5
-      start_period: 90s
+      start_period: 360s
 
   ms-matching-engine:
     build: ./ms-matching-engine
@@ -133,7 +153,7 @@ services:
       interval: 20s
       timeout: 5s
       retries: 5
-      start_period: 90s
+      start_period: 360s
 
   ms-notification:
     build: ./ms-notification
@@ -158,7 +178,7 @@ services:
       interval: 20s
       timeout: 5s
       retries: 5
-      start_period: 90s
+      start_period: 360s
 
   # ─────────────────────────────────────────────
   # BFF — agrega respuestas de los microservicios
@@ -187,11 +207,11 @@ services:
       ms-notification:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8086/actuator/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8086/api/actuator/health || exit 1"]
       interval: 20s
       timeout: 5s
       retries: 5
-      start_period: 90s
+      start_period: 360s
 
   # ─────────────────────────────────────────────
   # Gateway — punto de entrada externo único

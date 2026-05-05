@@ -1,0 +1,108 @@
+.page { background: var(--bg); min-height: 100vh; }
+.inner { max-width: 1040px; margin: 0 auto; padding: 40px 32px; }
+
+.breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 28px; font-size: 13px; color: var(--text-muted); }
+.breadcrumb button { background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 13px; font-family: 'DM Sans', sans-serif; }
+.breadcrumb button:hover { color: var(--primary); }
+.breadCurrent { color: var(--text); font-weight: 500; }
+
+.layout { display: grid; grid-template-columns: 1fr 340px; gap: 32px; }
+
+.photo { border-radius: 20px; overflow: hidden; height: 380px; background: #EDE8E0; margin-bottom: 24px; position: relative; border: 1px solid var(--border); }
+.photo img { width: 100%; height: 100%; object-fit: cover; }
+.photoOverlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 55%, rgba(20,14,8,0.5) 100%); }
+.photoBadge { position: absolute; top: 16px; left: 16px; }
+.photoInfo { position: absolute; bottom: 18px; left: 20px; }
+.petName { color: #fff; font-family: 'Sora', sans-serif; font-weight: 800; font-size: 28px; line-height: 1.1; }
+.petBreed { color: rgba(255,255,255,0.75); font-size: 14px; margin-top: 4px; }
+
+.detailCard { background: #fff; border-radius: 18px; padding: 28px; border: 1px solid var(--border); }
+.detailTitle { font-size: 16px; font-weight: 700; margin-bottom: 22px; }
+.detailGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.detailItem { padding: 14px 16px; background: var(--surface-2); border-radius: 12px; }
+.detailLabel { font-size: 10px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+.detailValue { font-size: 14px; color: var(--text); font-weight: 500; }
+
+.descBox { padding: 16px 18px; border-radius: 12px; border: 1px solid; }
+.descLost  { background: var(--primary-light); border-color: var(--primary-mid); }
+.descFound { background: var(--green-light);   border-color: var(--green-mid); }
+.descLabel { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+.descLabelLost  { color: #B8511F; }
+.descLabelFound { color: var(--green); }
+.descText { font-size: 14px; line-height: 1.7; color: var(--text-muted); }
+
+.sidebar { display: flex; flex-direction: column; gap: 14px; }
+.sideCard { background: #fff; border-radius: 18px; padding: 24px; border: 1px solid var(--border); overflow: hidden; }
+.reporter { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+.reporterIcon { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; }
+.reporterName { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px; }
+.reporterSub { font-size: 13px; color: var(--text-muted); }
+
+.sideCardHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.sideCardTitle { font-size: 13px; font-weight: 600; }
+.sideCardLink { background: none; border: none; cursor: pointer; color: var(--primary); font-size: 12px; font-weight: 600; font-family: 'DM Sans', sans-serif; }
+
+.miniMap { height: 148px; position: relative; margin: 0 -24px; overflow: hidden; }
+.miniMap :global(.leaflet-container) { height: 100%; width: 100%; }
+.miniMapEmpty {
+  height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 8px;
+  background: var(--surface-2); color: var(--text-light);
+  font-size: 12px; font-weight: 500;
+}
+.mapHint { display: flex; align-items: flex-start; gap: 8px; padding: 12px 0 0; }
+.mapHint p { font-size: 12px; color: #7A3010; line-height: 1.55; }
+
+.others { margin-top: 56px; }
+.othersTitle { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.othersSub { color: var(--text-muted); font-size: 13px; margin-bottom: 24px; }
+.othersGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+
+/* Skeleton */
+.skeletonWrap { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.skeletonBlock {
+  border-radius: 16px;
+  background: linear-gradient(90deg, var(--surface-2) 25%, #e8e4de 50%, var(--surface-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmerD 1.4s infinite;
+}
+@keyframes shimmerD { from { background-position: 200% 0 } to { background-position: -200% 0 } }
+.skeletonPhoto { aspect-ratio: 3/4; }
+.skeletonLines { display: flex; flex-direction: column; gap: 16px; padding-top: 16px; }
+.skeletonTitle { height: 40px; width: 60%; }
+.skeletonLine  { height: 20px; width: 100%; }
+
+/* Error */
+.errorState { text-align: center; padding: 80px 0; }
+.errorIcon  { font-size: 56px; margin-bottom: 16px; }
+.errorState h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+.errorState p  { color: var(--text-muted); font-size: 14px; }
+
+/* ── Tablet ────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .inner { padding: 32px 24px; }
+  .layout { grid-template-columns: 1fr 300px; gap: 24px; }
+  .photo  { height: 320px; }
+  .petName { font-size: 24px; }
+  .othersGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ── Mobile ────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .inner { padding: 24px 20px; }
+  .breadcrumb { font-size: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .layout { grid-template-columns: 1fr; gap: 18px; }
+  .photo  { height: 280px; border-radius: 16px; }
+  .petName { font-size: 22px; }
+  .detailCard { padding: 22px 18px; border-radius: 16px; }
+  .detailGrid { grid-template-columns: 1fr; gap: 10px; margin-bottom: 16px; }
+  .sideCard { padding: 20px 18px; border-radius: 16px; }
+  .miniMap { margin: 0 -18px; height: 140px; }
+
+  .others { margin-top: 36px; }
+  .othersTitle { font-size: 18px; }
+  .othersGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+  .skeletonWrap { grid-template-columns: 1fr; }
+  .skeletonPhoto { aspect-ratio: 4/3; }
+}

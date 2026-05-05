@@ -1,0 +1,245 @@
+.page { background: var(--bg); }
+
+/* Hero */
+.hero {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 88px 48px 80px;
+}
+.heroInner { max-width: 640px; margin: 0 auto; text-align: center; }
+.heroTitle {
+  font-size: 62px;
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-bottom: 18px;
+}
+.accent { color: var(--primary); }
+.heroSub {
+  font-size: 17px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  max-width: 420px;
+  margin: 0 auto 40px;
+}
+.heroActions { display: flex; gap: 10px; justify-content: center; }
+
+/* Stats */
+.statsSection {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+.statsInner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 48px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.statItem {
+  padding: 40px 32px;
+  border-right: 1px solid var(--border);
+}
+.statItem:first-child { padding-left: 0; }
+.statItem:last-child  { padding-right: 0; border-right: none; }
+.statNum {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 44px;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.statLabel { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.statDesc  { font-size: 13px; color: var(--text-light); line-height: 1.4; }
+
+/* Section */
+.section { padding: 64px 48px 0; max-width: 1160px; margin: 0 auto; }
+.sectionHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+}
+.eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+.sectionTitle { font-size: 34px; font-weight: 800; letter-spacing: -0.02em; }
+.seeAll {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+}
+.petsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+/* How it works */
+.howSection { padding: 72px 48px; max-width: 1160px; margin: 0 auto; }
+.howHead { text-align: center; margin-bottom: 48px; }
+.howSub { color: var(--text-muted); font-size: 16px; max-width: 440px; margin: 10px auto 0; }
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+.step {
+  background: #fff;
+  padding: 44px 40px;
+  position: relative;
+  border: 1px solid var(--border);
+}
+.step:first-child { border-radius: 20px 0 0 20px; }
+.step:last-child  { border-radius: 0 20px 20px 0; }
+.step + .step     { margin-left: -1px; }
+.stepDark { background: #1A1A18; }
+.stepNum {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--text-light);
+  margin-bottom: 20px;
+}
+.stepDark .stepNum { color: rgba(255,255,255,0.25); }
+.stepTitle { font-size: 20px; font-weight: 800; margin-bottom: 12px; color: var(--text); letter-spacing: -0.01em; }
+.stepDark .stepTitle { color: #fff; }
+.stepDesc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+.stepDark .stepDesc { color: rgba(255,255,255,0.55); }
+
+/* Stories */
+.storiesSection { background: #fff; border-top: 1px solid var(--border); padding: 72px 0; }
+.storiesInner   { max-width: 1160px; margin: 0 auto; padding: 0 48px; display: grid; grid-template-columns: 1fr 2fr; gap: 56px; align-items: start; }
+.storiesLeft    { position: sticky; top: 80px; }
+.storiesTitle   { font-size: 38px; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 18px; }
+.storiesSub     { font-size: 15px; color: var(--text-muted); line-height: 1.7; }
+.storiesRight   { display: flex; flex-direction: column; gap: 16px; }
+
+.storyCard {
+  border-radius: 18px; padding: 28px 32px;
+  border: 1px solid; cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex; align-items: flex-start; gap: 20px;
+}
+.storyCard:hover { transform: translateX(4px); box-shadow: var(--shadow); }
+
+.storyEmoji {
+  width: 54px; height: 54px; border-radius: 14px;
+  background: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 26px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.storyContent { flex: 1; }
+.storyMeta    { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.storyTitle   { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 16px; }
+.storyBadge   { font-size: 11px; background: #fff; font-weight: 700; padding: 2px 9px; border-radius: 100px; border: 1px solid; }
+.storyLocation { font-size: 12px; color: var(--text-light); font-weight: 500; margin-bottom: 8px; }
+.storyBody    { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+/* CTA */
+.ctaSection { padding: 24px 48px 72px; max-width: 1160px; margin: 0 auto; }
+.cta {
+  background: #1A1A18;
+  border-radius: 28px;
+  padding: 64px 72px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 48px;
+  position: relative;
+  overflow: hidden;
+}
+.ctaContent { position: relative; z-index: 1; }
+.eyebrowLight {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-bottom: 14px;
+}
+.ctaTitle {
+  font-size: 48px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  max-width: 500px;
+}
+.ctaSub { color: rgba(255,255,255,0.55); font-size: 16px; line-height: 1.7; max-width: 440px; }
+.ctaActions { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; }
+
+/* ── Tablet ────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .hero { padding: 64px 32px 56px; }
+  .heroTitle { font-size: 48px; }
+  .heroSub { font-size: 16px; }
+
+  .statsInner { padding: 0 32px; }
+  .statItem { padding: 32px 24px; }
+  .statNum { font-size: 36px; }
+
+  .section, .howSection, .ctaSection { padding-left: 32px; padding-right: 32px; }
+  .storiesInner { padding: 0 32px; gap: 32px; }
+
+  .petsGrid { grid-template-columns: repeat(3, 1fr); }
+  .sectionTitle { font-size: 28px; }
+
+  .cta { padding: 48px; grid-template-columns: 1fr; gap: 28px; }
+  .ctaTitle { font-size: 38px; }
+}
+
+/* ── Mobile ────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .hero { padding: 48px 20px 44px; }
+  .heroTitle { font-size: 36px; line-height: 1.1; }
+  .heroSub { font-size: 15px; margin-bottom: 28px; }
+  .heroActions { flex-direction: column; align-items: stretch; }
+  .heroActions button { justify-content: center; }
+
+  .statsInner { grid-template-columns: repeat(2, 1fr); padding: 0 20px; }
+  .statItem { padding: 24px 20px; border-right: none; border-bottom: 1px solid var(--border); }
+  .statItem:nth-child(odd)  { border-right: 1px solid var(--border); padding-left: 0; }
+  .statItem:nth-child(even) { padding-right: 0; }
+  .statItem:last-child, .statItem:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+  .statNum { font-size: 32px; }
+
+  .section, .howSection, .ctaSection { padding-left: 20px; padding-right: 20px; padding-top: 48px; }
+  .sectionHead { flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 24px; }
+  .sectionTitle { font-size: 24px; }
+
+  .petsGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+  .howSection { padding-bottom: 56px; }
+  .steps { grid-template-columns: 1fr; }
+  .step { padding: 32px 24px; }
+  .step:first-child { border-radius: 20px 20px 0 0; }
+  .step:last-child  { border-radius: 0 0 20px 20px; }
+  .step + .step     { margin-left: 0; margin-top: -1px; }
+
+  .storiesSection { padding: 56px 0; }
+  .storiesInner   { padding: 0 20px; grid-template-columns: 1fr; gap: 24px; }
+  .storiesLeft    { position: static; }
+  .storiesTitle   { font-size: 28px; }
+
+  .storyCard { padding: 22px; gap: 14px; }
+  .storyEmoji { width: 44px; height: 44px; font-size: 22px; border-radius: 12px; }
+
+  .cta { padding: 36px 24px; border-radius: 22px; }
+  .ctaTitle { font-size: 28px; }
+  .ctaSub { font-size: 14px; }
+}

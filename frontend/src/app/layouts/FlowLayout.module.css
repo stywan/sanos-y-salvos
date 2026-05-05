@@ -1,0 +1,33 @@
+.wrap {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.header {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cancel {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'DM Sans', sans-serif;
+  transition: color 0.12s;
+}
+
+.cancel:hover { color: var(--text); }
+
+.main {
+  padding: 48px 24px 80px;
+}
