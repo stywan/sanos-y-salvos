@@ -1,0 +1,36 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px 3px 7px;
+  border-radius: 100px;
+  font-family: 'Sora', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.lost {
+  background: #FEF0E7;
+  color: #B8511F;
+  border: 1px solid rgba(212, 101, 42, 0.19);
+}
+
+.found {
+  background: #E8F5EE;
+  color: #197A43;
+  border: 1px solid rgba(46, 158, 96, 0.19);
+}
+
+.reunido {
+  background: #F3EEFF;
+  color: #6D28D9;
+  border: 1px solid rgba(124, 58, 237, 0.19);
+}

@@ -1,0 +1,74 @@
+.page { background: var(--bg); min-height: 100vh; }
+
+.header { background: #fff; border-bottom: 1px solid var(--border); padding: 40px 0 32px; }
+.headerInner { max-width: 1160px; margin: 0 auto; padding: 0 48px; }
+.eyebrow { font-size: 11px; font-weight: 700; color: var(--text-light); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+.title { font-size: 38px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+.sub { color: var(--text-muted); font-size: 15px; max-width: 460px; line-height: 1.6; margin-bottom: 28px; }
+
+.filters { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+.searchBox {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface-2); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 9px 14px; min-width: 220px;
+}
+.searchInput { background: none; border: none; font-size: 14px; color: var(--text); outline: none; width: 100%; font-family: 'DM Sans', sans-serif; }
+
+.pills {
+  display: flex; gap: 4px;
+  background: var(--surface-2); border: 1.5px solid var(--border); border-radius: 10px; padding: 4px;
+}
+.pill {
+  padding: 7px 16px; border-radius: 7px; border: none; cursor: pointer;
+  font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+  background: transparent; color: var(--text-muted); transition: all 0.12s;
+}
+.pillActive { background: var(--primary); color: #fff; }
+
+.count { margin-left: auto; font-size: 13px; color: var(--text-muted); }
+.count strong { color: var(--text); }
+
+.grid { max-width: 1160px; margin: 0 auto; padding: 40px 48px; }
+
+.petsGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+.skeleton {
+  border-radius: 18px;
+  aspect-ratio: 3/4;
+  background: linear-gradient(90deg, var(--surface-2) 25%, #e8e4de 50%, var(--surface-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer { from { background-position: 200% 0 } to { background-position: -200% 0 } }
+
+.empty { text-align: center; padding: 80px 0; color: var(--text-muted); }
+.emptyIcon { font-size: 48px; margin-bottom: 16px; }
+.empty h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+.empty p  { font-size: 14px; }
+
+/* ── Tablet ────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .header { padding: 32px 0 24px; }
+  .headerInner { padding: 0 32px; }
+  .title { font-size: 30px; }
+  .grid { padding: 32px; }
+  .petsGrid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+}
+
+/* ── Mobile ────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .header { padding: 28px 0 20px; }
+  .headerInner { padding: 0 20px; }
+  .title { font-size: 24px; }
+  .sub { font-size: 14px; margin-bottom: 22px; }
+
+  .filters { gap: 10px; }
+  .searchBox { min-width: 0; width: 100%; }
+  .pills { width: 100%; justify-content: space-between; }
+  .pill { flex: 1; padding: 7px 8px; font-size: 12px; text-align: center; }
+  .count { margin-left: 0; }
+
+  .grid { padding: 24px 20px; }
+  .petsGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+}

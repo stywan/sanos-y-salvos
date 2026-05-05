@@ -1,0 +1,123 @@
+.split { display: grid; grid-template-columns: 1fr 1.2fr; min-height: 100vh; background: #fff; }
+
+.left {
+  background: linear-gradient(160deg, #F2DDD0 0%, #E8CBAF 50%, #DEB898 100%);
+  display: flex;
+  flex-direction: column;
+  padding: 48px 56px;
+  position: relative;
+  overflow: hidden;
+}
+.leftBody { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.leftTitle { font-size: 36px; font-weight: 800; color: #3A1F0D; line-height: 1.18; margin-bottom: 14px; max-width: 300px; }
+.leftSub   { font-size: 15px; color: #7A4828; line-height: 1.7; max-width: 280px; }
+
+.quote {
+  background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 22px 24px;
+}
+.quote p { font-size: 14px; color: #3A1F0D; line-height: 1.65; font-style: italic; margin-bottom: 12px; }
+.quoteAuthor { font-size: 12px; font-weight: 700; color: #7A4828; }
+
+.right { display: flex; align-items: center; justify-content: center; padding: 60px 72px; background: #FAFAF8; }
+.form  { width: 100%; max-width: 400px; }
+
+.formHead  { margin-bottom: 32px; }
+.formTitle { font-size: 30px; font-weight: 800; margin-bottom: 6px; }
+.formSub   { color: var(--text-muted); font-size: 15px; }
+
+.field       { margin-bottom: 16px; }
+.fieldHeader { display: flex; justify-content: space-between; margin-bottom: 7px; }
+.fieldLabel  { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; color: var(--text-light); text-transform: uppercase; display: block; }
+
+.input {
+  width: 100%; padding: 13px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px; font-size: 15px; color: var(--text);
+  background: var(--input-bg); transition: all 0.15s; outline: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.inputFocus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(212,101,42,0.1); }
+
+.forgot { background: none; border: none; cursor: pointer; color: var(--primary); font-size: 12px; font-weight: 600; font-family: 'DM Sans', sans-serif; }
+
+.select {
+  width: 100%; padding: 13px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px; font-size: 15px; color: var(--text);
+  background: var(--input-bg); outline: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+.select:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(212,101,42,0.1); }
+
+.orDivider {
+  display: flex; align-items: center; gap: 14px;
+  margin: 22px 0;
+}
+.orLine  { flex: 1; height: 1px; background: var(--border); }
+.orLabel { font-size: 11px; font-weight: 700; color: var(--text-light); letter-spacing: 0.06em; white-space: nowrap; }
+
+.socialRow { display: flex; gap: 10px; margin-bottom: 8px; }
+.socialBtn {
+  flex: 1; padding: 12px 0;
+  border: 1.5px solid var(--border); border-radius: 12px;
+  background: #fff; cursor: pointer;
+  font-size: 14px; font-weight: 500; color: var(--text);
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.12s;
+}
+.socialBtn:hover { background: var(--bg); }
+.socialIcon { font-size: 17px; }
+
+.switchText { text-align: center; font-size: 14px; color: var(--text-muted); margin-top: 24px; }
+.switchLink { background: none; border: none; cursor: pointer; color: var(--primary); font-weight: 700; font-size: 14px; font-family: 'DM Sans', sans-serif; }
+
+.errorBanner {
+  background: #FEF0EE;
+  border: 1px solid #F5C6C0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #C0392B;
+  margin-bottom: 4px;
+}
+
+/* ── Tablet ────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .split { grid-template-columns: 1fr 1.4fr; }
+  .left  { padding: 36px 36px; }
+  .leftTitle { font-size: 28px; }
+  .right { padding: 48px 40px; }
+}
+
+/* ── Mobile ────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .split { grid-template-columns: 1fr; min-height: auto; }
+
+  .left {
+    padding: 32px 24px;
+    min-height: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+  .leftBody { flex: 1; }
+  .leftTitle { font-size: 22px; max-width: none; margin-bottom: 6px; }
+  .leftSub   { font-size: 13px; max-width: none; }
+  .quote     { display: none; }
+
+  .right { padding: 32px 20px 48px; min-height: 70vh; }
+  .form  { max-width: none; }
+  .formTitle { font-size: 24px; }
+  .formSub   { font-size: 14px; }
+
+  .socialRow { flex-direction: column; }
+}
+
+@media (max-width: 420px) {
+  .left { flex-direction: column; align-items: flex-start; }
+}

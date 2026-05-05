@@ -1,0 +1,4 @@
+.placeholder { text-align: center; padding: 80px 24px; color: var(--text-muted); }
+.icon { font-size: 56px; margin-bottom: 16px; }
+.placeholder h2 { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.placeholder p  { font-size: 15px; }

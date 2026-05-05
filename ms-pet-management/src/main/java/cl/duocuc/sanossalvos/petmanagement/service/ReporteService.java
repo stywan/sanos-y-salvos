@@ -87,11 +87,16 @@ public class ReporteService {
 
     @Transactional(readOnly = true)
     public List<ReporteResponse> listarReportes(TipoReporte tipo, EstadoReporte estado, Long usuarioId) {
-        List<Reporte> reportes = (tipo != null && estado != null)
-                ? reporteRepository.findByTipoAndEstado(tipo, estado)
-                : estado != null
-                    ? reporteRepository.findByEstado(estado)
-                    : reporteRepository.findAll();
+        List<Reporte> reportes;
+        if (tipo != null && estado != null) {
+            reportes = reporteRepository.findByTipoAndEstado(tipo, estado);
+        } else if (tipo != null) {
+            reportes = reporteRepository.findByTipo(tipo);
+        } else if (estado != null) {
+            reportes = reporteRepository.findByEstado(estado);
+        } else {
+            reportes = reporteRepository.findAll();
+        }
 
         return reportes.stream()
                 .map(r -> toResponse(r, usuarioId))
@@ -103,6 +108,14 @@ public class ReporteService {
         return reporteRepository.findByUsuarioId(usuarioId).stream()
                 .map(r -> toResponse(r, usuarioId))
                 .toList();
+    }
+
+    @Transactional
+    public ReporteResponse registrarAvistamiento(Long id, Long usuarioId) {
+        Reporte reporte = reporteRepository.findById(id)
+                .orElseThrow(() -> new ReporteNotFoundException(id));
+        reporte.setEstado(EstadoReporte.RESUELTO);
+        return toResponse(reporteRepository.save(reporte), usuarioId);
     }
 
     @Transactional

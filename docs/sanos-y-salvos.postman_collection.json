@@ -1045,6 +1045,84 @@
           }
         }
       ]
+    },
+    {
+      "name": "bff",
+      "item": [
+        {
+          "name": "GET Mapa — reportes activos + zonas",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:8086/bff/mapa",
+              "host": ["http://localhost:8086"],
+              "path": ["bff", "mapa"]
+            },
+            "description": "Agrega reportes ACTIVOS (ms-pet-management) + zonas del usuario (ms-geolocation). Respuesta para poblar el mapa interactivo."
+          }
+        },
+        {
+          "name": "GET Dashboard — estadísticas del usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:8086/bff/dashboard",
+              "host": ["http://localhost:8086"],
+              "path": ["bff", "dashboard"]
+            },
+            "description": "Devuelve: totalReportesPerdidos, totalReportesEncontrados, totalMatchesPendientes, notificacionesNoLeidas, reportesRecientes (3 últimos), matchesRecientes."
+          }
+        },
+        {
+          "name": "GET Detalle reporte + matches",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:8086/bff/reportes/{{reporte_id}}/detalle",
+              "host": ["http://localhost:8086"],
+              "path": ["bff", "reportes", "{{reporte_id}}", "detalle"]
+            },
+            "description": "Agrega el detalle completo del reporte (ms-pet-management) con todos sus matches calculados (ms-matching-engine)."
+          }
+        },
+        {
+          "name": "POST Buscar matches para un reporte",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:8086/bff/reportes/{{reporte_id}}/buscar-matches",
+              "host": ["http://localhost:8086"],
+              "path": ["bff", "reportes", "{{reporte_id}}", "buscar-matches"]
+            },
+            "description": "Solicita al motor de matching que calcule candidatos para el reporte indicado. Devuelve la lista de matches encontrados (vacía si no hay)."
+          }
+        },
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8086/actuator/health",
+              "host": ["http://localhost:8086"],
+              "path": ["actuator", "health"]
+            },
+            "description": "Verifica que el BFF está levantado."
+          }
+        }
+      ]
     }
   ]
 }

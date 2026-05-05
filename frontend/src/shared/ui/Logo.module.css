@@ -1,0 +1,39 @@
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.iconLight {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.name {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.tagline {
+  font-size: 10px;
+  color: var(--text-light);
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
+.light .name    { color: #fff; }
+.light .tagline { color: rgba(255, 255, 255, 0.6); }
