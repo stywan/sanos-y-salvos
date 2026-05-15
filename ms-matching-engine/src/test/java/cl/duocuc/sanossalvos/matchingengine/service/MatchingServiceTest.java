@@ -6,6 +6,7 @@ import cl.duocuc.sanossalvos.matchingengine.client.PetManagementClient;
 import cl.duocuc.sanossalvos.matchingengine.dto.MatchResponse;
 import cl.duocuc.sanossalvos.matchingengine.dto.ext.PuntoCercanoDto;
 import cl.duocuc.sanossalvos.matchingengine.dto.ext.ReporteDto;
+import cl.duocuc.sanossalvos.matchingengine.kafka.MatchEventPublisher;
 import cl.duocuc.sanossalvos.matchingengine.model.EstadoMatch;
 import cl.duocuc.sanossalvos.matchingengine.model.Match;
 import cl.duocuc.sanossalvos.matchingengine.repository.MatchRepository;
@@ -33,6 +34,7 @@ class MatchingServiceTest {
     @Mock NotificacionClient  notifClient;
     @Mock MatchRepository     matchRepository;
     @Mock PuntuacionService   puntuacionService;
+    @Mock MatchEventPublisher matchEventPublisher;
     @InjectMocks MatchingService service;
 
     private ReporteDto reportePerdido;
@@ -89,7 +91,8 @@ class MatchingServiceTest {
 
         assertThat(resultado).hasSize(1);
         assertThat(resultado.get(0).getPuntuacion()).isEqualTo(80);
-        verify(notifClient).crearNotificacion(any());
+        // La notificación ahora se publica vía Kafka, no HTTP
+        verify(matchEventPublisher, atLeastOnce()).publicarMatchEncontrado(any());
     }
 
     @Test
