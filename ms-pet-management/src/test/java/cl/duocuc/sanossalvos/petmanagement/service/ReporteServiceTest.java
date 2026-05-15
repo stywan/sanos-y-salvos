@@ -4,6 +4,7 @@ import cl.duocuc.sanossalvos.petmanagement.dto.CambiarEstadoRequest;
 import cl.duocuc.sanossalvos.petmanagement.dto.CrearReporteRequest;
 import cl.duocuc.sanossalvos.petmanagement.dto.ReporteResponse;
 import cl.duocuc.sanossalvos.petmanagement.exception.ReporteNotFoundException;
+import cl.duocuc.sanossalvos.petmanagement.kafka.ReporteEventPublisher;
 import cl.duocuc.sanossalvos.petmanagement.model.*;
 import cl.duocuc.sanossalvos.petmanagement.repository.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,7 @@ class ReporteServiceTest {
     @Mock private EspecieRepository especieRepository;
     @Mock private RazaRepository razaRepository;
     @Mock private ColorRepository colorRepository;
+    @Mock private ReporteEventPublisher eventPublisher;
 
     @InjectMocks
     private ReporteService reporteService;

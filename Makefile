@@ -81,6 +81,30 @@ logs-svc: ## Sigue los logs de UN servicio: make logs-svc s=bff
 	@[ "$(s)" ] || (echo "$(YELLOW)Uso: make logs-svc s=<servicio>$(RESET)" && exit 1)
 	$(COMPOSE) logs -f $(s)
 
+# ─────────────────────────────────────────────────────────────
+# Kafka
+# ─────────────────────────────────────────────────────────────
+
+.PHONY: kafka-topics
+kafka-topics: ## Lista los topics existentes en Kafka
+	@echo "$(CYAN)── Topics en Kafka ──────────────────────$(RESET)"
+	@$(COMPOSE) exec -T kafka kafka-topics --bootstrap-server localhost:9092 --list 2>/dev/null || echo "$(YELLOW)Kafka no responde. ¿Está arriba? (make status)$(RESET)"
+
+.PHONY: kafka-consume
+kafka-consume: ## Escucha un topic en vivo: make kafka-consume t=reporte.creado
+	@[ "$(t)" ] || (echo "$(YELLOW)Uso: make kafka-consume t=<topic>$(RESET)" && exit 1)
+	@echo "$(CYAN)📡 Escuchando topic '$(t)' (Ctrl+C para salir)...$(RESET)"
+	@$(COMPOSE) exec kafka kafka-console-consumer --bootstrap-server localhost:9092 --topic $(t) --from-beginning
+
+.PHONY: kafka-ui
+kafka-ui: ## Abre la UI web de Kafka
+	@echo "$(CYAN)🌐 Kafka UI → http://localhost:8090$(RESET)"
+	@which open >/dev/null 2>&1 && open http://localhost:8090 || echo "Abrir manualmente: http://localhost:8090"
+
+# ─────────────────────────────────────────────────────────────
+# Observabilidad
+# ─────────────────────────────────────────────────────────────
+
 .PHONY: health
 health: ## Consulta el actuator/health de cada microservicio
 	@echo "$(CYAN)── Healthchecks ──────────────────────────$(RESET)"
@@ -89,7 +113,7 @@ health: ## Consulta el actuator/health de cada microservicio
 	@curl -sf http://localhost:8082/actuator/health | python3 -c "import sys,json; d=json.load(sys.stdin); print('ms-geolocation  :', d['status'])" 2>/dev/null || echo "ms-geolocation  : ✗ no responde"
 	@curl -sf http://localhost:8083/actuator/health | python3 -c "import sys,json; d=json.load(sys.stdin); print('ms-matching     :', d['status'])" 2>/dev/null || echo "ms-matching     : ✗ no responde"
 	@curl -sf http://localhost:8085/actuator/health | python3 -c "import sys,json; d=json.load(sys.stdin); print('ms-notification :', d['status'])" 2>/dev/null || echo "ms-notification : ✗ no responde"
-	@curl -sf http://localhost:8086/actuator/health | python3 -c "import sys,json; d=json.load(sys.stdin); print('bff             :', d['status'])" 2>/dev/null || echo "bff             : ✗ no responde"
+	@curl -sf http://localhost:8086/api/actuator/health | python3 -c "import sys,json; d=json.load(sys.stdin); print('bff             :', d['status'])" 2>/dev/null || echo "bff             : ✗ no responde"
 	@curl -sf http://localhost:8080/actuator/health | python3 -c "import sys,json; d=json.load(sys.stdin); print('api-gateway     :', d['status'])" 2>/dev/null || echo "api-gateway     : ✗ no responde"
 	@echo "$(CYAN)── Frontend ──────────────────────────────$(RESET)"
 	@curl -sf -o /dev/null -w "frontend (nginx) : HTTP %{http_code}\n" http://localhost:5173/ 2>/dev/null || echo "frontend        : ✗ no responde"
@@ -126,4 +150,5 @@ help: ## Muestra esta ayuda
 	@echo "    API Gateway→ http://localhost:8080"
 	@echo "    BFF        → http://localhost:8086"
 	@echo "    MinIO UI   → http://localhost:9001"
+	@echo "    Kafka UI   → http://localhost:8090"
 	@echo ""
