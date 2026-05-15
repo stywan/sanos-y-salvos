@@ -26,6 +26,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Endpoint interno: lo llaman otros microservicios (sin JWT de usuario)
                 .requestMatchers(HttpMethod.POST, "/api/notificaciones").permitAll()
+                // SSE stream: el token va por query param (?token=...) — se valida en el controller
+                .requestMatchers(HttpMethod.GET, "/api/notificaciones/stream").permitAll()
                 // Actuator: público
                 .requestMatchers("/actuator/**").permitAll()
                 // Todo lo demás requiere JWT
