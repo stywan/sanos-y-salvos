@@ -1,0 +1,174 @@
+%% Sanos y Salvos — Modelo de Datos (Diagrama Entidad-Relación)
+%% Renderiza en GitHub, Notion, mermaid.live
+
+erDiagram
+
+    %% ═══════════════════════════════
+    %% ms-user-auth
+    %% ═══════════════════════════════
+    TIPOS_USUARIO {
+        bigint id PK
+        varchar nombre UK
+        varchar descripcion
+    }
+
+    USUARIOS {
+        bigint id PK
+        varchar email UK
+        varchar password
+        boolean activo
+        timestamp fecha_creacion
+        timestamp fecha_actualizacion
+        bigint tipo_usuario_id FK
+    }
+
+    PERFIL_PERSONA {
+        bigint usuario_id PK_FK
+        varchar nombre
+        varchar apellido
+        varchar telefono
+    }
+
+    PERFIL_ORGANIZACION {
+        bigint usuario_id PK_FK
+        varchar nombre_organizacion
+        varchar direccion
+        text descripcion
+        varchar telefono
+    }
+
+    ROLES {
+        bigint id PK
+        varchar nombre UK
+        varchar descripcion
+    }
+
+    USUARIO_ROLES {
+        bigint usuario_id PK_FK
+        bigint rol_id PK_FK
+    }
+
+    %% ═══════════════════════════════
+    %% ms-pet-management
+    %% ═══════════════════════════════
+    ESPECIES {
+        bigint id PK
+        varchar nombre UK
+    }
+
+    RAZAS {
+        bigint id PK
+        varchar nombre
+        bigint especie_id FK
+    }
+
+    COLORES {
+        bigint id PK
+        varchar nombre UK
+    }
+
+    MASCOTAS {
+        bigint id PK
+        varchar nombre
+        enum genero "MACHO|HEMBRA|DESCONOCIDO"
+        text descripcion_caracteristicas
+        bigint especie_id FK
+        bigint raza_id FK
+    }
+
+    MASCOTA_COLORES {
+        bigint mascota_id PK_FK
+        bigint color_id PK_FK
+    }
+
+    REPORTES {
+        bigint id PK
+        enum tipo "PERDIDO|ENCONTRADO"
+        enum estado "ACTIVO|RESUELTO|INACTIVO"
+        date fecha_suceso
+        timestamp fecha_reporte
+        numeric latitud
+        numeric longitud
+        varchar comuna
+        varchar direccion_referencia
+        varchar nombre_contacto
+        varchar telefono_contacto
+        varchar email_contacto
+        boolean telefono_visible
+        bigint usuario_id "FK lógica"
+        bigint mascota_id FK
+    }
+
+    FOTOS_REPORTE {
+        bigint id PK
+        varchar url
+        int orden
+        boolean es_principal
+        bigint reporte_id FK
+    }
+
+    %% ═══════════════════════════════
+    %% ms-matching-engine
+    %% ═══════════════════════════════
+    MATCHES {
+        bigint id PK
+        int puntuacion
+        numeric distancia_km
+        enum estado "PENDIENTE|CONFIRMADO|DESCARTADO"
+        timestamp fecha_creacion
+        bigint reporte_perdido_id "FK lógica"
+        bigint reporte_encontrado_id "FK lógica"
+    }
+
+    %% ═══════════════════════════════
+    %% ms-notification
+    %% ═══════════════════════════════
+    NOTIFICACIONES {
+        bigint id PK
+        enum tipo "MATCH|ZONA|RESUELTO"
+        varchar titulo
+        text mensaje
+        boolean leida
+        timestamp fecha_creacion
+        timestamp fecha_leida
+        bigint usuario_id "FK lógica"
+        bigint reporte_id "FK lógica"
+    }
+
+    %% ═══════════════════════════════
+    %% ms-geolocation
+    %% ═══════════════════════════════
+    ZONAS_BUSQUEDA {
+        bigint id PK
+        varchar nombre
+        numeric latitud_centro
+        numeric longitud_centro
+        numeric radio_km
+        boolean activa
+        timestamp fecha_creacion
+        bigint usuario_id "FK lógica"
+    }
+
+    %% ─── Relaciones físicas ────────────────────────────
+    TIPOS_USUARIO ||--o{ USUARIOS : clasifica
+    USUARIOS      ||--o| PERFIL_PERSONA : "tiene perfil"
+    USUARIOS      ||--o| PERFIL_ORGANIZACION : "tiene perfil"
+    USUARIOS      ||--o{ USUARIO_ROLES : tiene
+    ROLES         ||--o{ USUARIO_ROLES : asigna
+
+    ESPECIES      ||--o{ RAZAS : agrupa
+    ESPECIES      ||--o{ MASCOTAS : "es de especie"
+    RAZAS         ||--o{ MASCOTAS : "es de raza"
+    MASCOTAS      ||--o{ MASCOTA_COLORES : tiene
+    COLORES       ||--o{ MASCOTA_COLORES : asigna
+
+    MASCOTAS      ||--o{ REPORTES : describe
+    REPORTES      ||--o{ FOTOS_REPORTE : "tiene fotos"
+
+    %% ─── Relaciones lógicas cross-microservicio ──────
+    USUARIOS      ||..o{ REPORTES : crea
+    USUARIOS      ||..o{ NOTIFICACIONES : recibe
+    USUARIOS      ||..o{ ZONAS_BUSQUEDA : configura
+    REPORTES      ||..o{ MATCHES : "perdido_id"
+    REPORTES      ||..o{ MATCHES : "encontrado_id"
+    REPORTES      ||..o{ NOTIFICACIONES : referencia

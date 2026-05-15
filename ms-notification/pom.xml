@@ -51,6 +51,12 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
+		<!-- Spring Kafka — consumer de eventos -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
 		<!-- JWT (JJWT 0.12.5) -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>

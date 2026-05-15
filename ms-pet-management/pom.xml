@@ -73,6 +73,12 @@
 			<version>8.5.7</version>
 		</dependency>
 
+		<!-- Spring Kafka — producer de eventos asíncronos -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
 		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>

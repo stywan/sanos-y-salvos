@@ -23,4 +23,6 @@ public class ReporteDto {
     private Double latitud;
     private Double longitud;
     private String comuna;
+    private String nombreMascota;
+    private String emailContacto;
 }

@@ -1,0 +1,87 @@
+%% Sanos y Salvos — Diagrama de Componentes (Mermaid)
+%% Renderiza directamente en GitHub, Notion, mermaid.live
+
+flowchart TB
+    user(["Usuario<br/>(navegador)"])
+
+    subgraph PRES["Capa de Presentación"]
+        fe["Frontend<br/>React + Vite<br/>nginx :5173"]
+    end
+
+    subgraph EDGE["Capa de Acceso"]
+        gw["API Gateway<br/>Spring Cloud Gateway<br/>:8080"]
+        bff["BFF<br/>Spring Boot<br/>:8086"]
+    end
+
+    subgraph MS["⚙️ Microservicios"]
+        auth["ms-user-auth<br/>:8084"]
+        pet["ms-pet-management<br/>:8081"]
+        geo["ms-geolocation<br/>:8082"]
+        match["ms-matching-engine<br/>:8083"]
+        notif["ms-notification<br/>+ SSE :8085"]
+    end
+
+    subgraph BROKER["📡 Event Broker (Kafka)"]
+        kafka[("Apache Kafka :9092<br/>━━━━━━━━━━━━━━━<br/> reporte.creado<br/> avistamiento.registrado<br/> reporte.resuelto<br/> match.encontrado")]
+        zk["Zookeeper :2181"]
+        kui["Kafka UI :8090"]
+    end
+
+    subgraph DATA["Persistencia"]
+        db[("PostgreSQL :5433")]
+        minio[("MinIO :9000<br/>fotos mascotas")]
+    end
+
+    %% Comunicación cliente
+    user -->|HTTPS| fe
+    fe -->|REST + JWT| gw
+    fe -.->|SSE<br/>text/event-stream| notif
+
+    %% Gateway routing
+    gw --> auth
+    gw --> pet
+    gw --> geo
+    gw --> match
+    gw --> notif
+    gw --> bff
+
+    %% BFF agrega múltiples MS
+    bff --> pet
+    bff --> geo
+    bff --> match
+    bff --> notif
+
+    %% Matching consulta sync con circuit breaker
+    match -->|REST<br/>circuit breaker| pet
+    match -->|REST<br/>circuit breaker| geo
+
+    %% Kafka — eventos asíncronos
+    pet -.->|produce| kafka
+    kafka -.->|consume| match
+    match -.->|produce<br/>match.encontrado| kafka
+    kafka -.->|consume| notif
+
+    %% Infra Kafka
+    kafka --- zk
+    kui --> kafka
+
+    %% Persistencia (JPA/Hibernate)
+    auth -->|JPA| db
+    pet -->|JPA| db
+    geo -->|JPA| db
+    match -->|JPA| db
+    notif -->|JPA| db
+    pet -->|S3 API| minio
+    fe -.->|GET imágenes| minio
+
+    %% Estilos
+    classDef sync stroke:#2E9E60,stroke-width:2px
+    classDef async stroke:#7C3AED,stroke-width:2px,stroke-dasharray: 5 5
+    classDef sse stroke:#1A6BCC,stroke-width:2px,stroke-dasharray: 5 5
+
+    style user fill:#FFF8EF,stroke:#D4652A
+    style kafka fill:#F3EEFF,stroke:#7C3AED
+    style db fill:#FFF,stroke:#1A6BCC
+    style minio fill:#FFF,stroke:#1A6BCC
+    style fe fill:#E8F5EE,stroke:#2E9E60
+    style notif fill:#E8F5EE,stroke:#2E9E60

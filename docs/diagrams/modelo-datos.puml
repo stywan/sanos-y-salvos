@@ -1,0 +1,248 @@
+@startuml SanosYSalvos-ModeloDatos
+title Sanos y Salvos — Modelo de Datos (Diagrama Entidad-Relación)
+
+' ──────────────────────────────────────────────
+'  Estilo
+' ──────────────────────────────────────────────
+skinparam backgroundColor #FAFAF8
+skinparam shadowing false
+skinparam Linetype ortho
+skinparam ArrowColor #555555
+skinparam packageBackgroundColor transparent
+skinparam packageBorderColor #888888
+skinparam packageFontStyle bold
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2E9E60
+  FontColor #1A140E
+  FontSize 11
+  AttributeFontSize 10
+}
+
+hide circle
+hide methods
+
+' ──────────────────────────────────────────────
+'  ms-user-auth
+' ──────────────────────────────────────────────
+package "ms-user-auth" #FFF6EF {
+
+  entity tipos_usuario {
+    * id : bigint <<PK>>
+    --
+    * nombre : varchar(50) <<unique>>
+    descripcion : varchar(200)
+  }
+
+  entity usuarios {
+    * id : bigint <<PK>>
+    --
+    * email : varchar(150) <<unique>>
+    * password : varchar(255)
+    * activo : boolean
+    * fecha_creacion : timestamp
+    fecha_actualizacion : timestamp
+    --
+    * tipo_usuario_id : bigint <<FK>>
+  }
+
+  entity perfil_persona {
+    * usuario_id : bigint <<PK,FK>>
+    --
+    * nombre : varchar(100)
+    * apellido : varchar(100)
+    telefono : varchar(20)
+  }
+
+  entity perfil_organizacion {
+    * usuario_id : bigint <<PK,FK>>
+    --
+    * nombre_organizacion : varchar(150)
+    direccion : varchar(250)
+    descripcion : text
+    telefono : varchar(20)
+  }
+
+  entity roles {
+    * id : bigint <<PK>>
+    --
+    * nombre : varchar(50) <<unique>>
+    descripcion : varchar(200)
+  }
+
+  entity usuario_roles {
+    * usuario_id : bigint <<PK,FK>>
+    * rol_id : bigint <<PK,FK>>
+  }
+}
+
+' ──────────────────────────────────────────────
+'  ms-pet-management
+' ──────────────────────────────────────────────
+package "ms-pet-management" #E8F5EE {
+
+  entity especies {
+    * id : bigint <<PK>>
+    --
+    * nombre : varchar(50) <<unique>>
+  }
+
+  entity razas {
+    * id : bigint <<PK>>
+    --
+    * nombre : varchar(100)
+    * especie_id : bigint <<FK>>
+  }
+
+  entity colores {
+    * id : bigint <<PK>>
+    --
+    * nombre : varchar(50) <<unique>>
+  }
+
+  entity mascotas {
+    * id : bigint <<PK>>
+    --
+    nombre : varchar(100)
+    genero : enum [MACHO|HEMBRA|DESCONOCIDO]
+    descripcion_caracteristicas : text
+    --
+    * especie_id : bigint <<FK>>
+    raza_id : bigint <<FK>>
+  }
+
+  entity mascota_colores {
+    * mascota_id : bigint <<PK,FK>>
+    * color_id : bigint <<PK,FK>>
+  }
+
+  entity reportes {
+    * id : bigint <<PK>>
+    --
+    * tipo : enum [PERDIDO|ENCONTRADO]
+    * estado : enum [ACTIVO|RESUELTO|INACTIVO]
+    * fecha_suceso : date
+    * fecha_reporte : timestamp
+    latitud : numeric(10,8)
+    longitud : numeric(11,8)
+    comuna : varchar(100)
+    direccion_referencia : varchar(255)
+    * nombre_contacto : varchar(150)
+    * telefono_contacto : varchar(20)
+    * email_contacto : varchar(150)
+    * telefono_visible : boolean
+    --
+    * usuario_id : bigint <<FK lógica>>
+    * mascota_id : bigint <<FK>>
+  }
+
+  entity fotos_reporte {
+    * id : bigint <<PK>>
+    --
+    * url : varchar(500)
+    * orden : int
+    * es_principal : boolean
+    --
+    * reporte_id : bigint <<FK>>
+  }
+}
+
+' ──────────────────────────────────────────────
+'  ms-matching-engine
+' ──────────────────────────────────────────────
+package "ms-matching-engine" #F3EEFF {
+
+  entity matches {
+    * id : bigint <<PK>>
+    --
+    * puntuacion : int [0-100]
+    distancia_km : numeric(6,3)
+    * estado : enum [PENDIENTE|CONFIRMADO|DESCARTADO]
+    * fecha_creacion : timestamp
+    --
+    * reporte_perdido_id : bigint <<FK lógica>>
+    * reporte_encontrado_id : bigint <<FK lógica>>
+    --
+    UNIQUE (perdido, encontrado)
+  }
+}
+
+' ──────────────────────────────────────────────
+'  ms-notification
+' ──────────────────────────────────────────────
+package "ms-notification" #FFF0EB {
+
+  entity notificaciones {
+    * id : bigint <<PK>>
+    --
+    * tipo : enum [MATCH_ENCONTRADO|ZONA_ALERTA|REPORTE_RESUELTO]
+    * titulo : varchar(200)
+    * mensaje : text
+    reporte_id : bigint <<FK lógica>>
+    * leida : boolean
+    * fecha_creacion : timestamp
+    fecha_leida : timestamp
+    --
+    * usuario_id : bigint <<FK lógica>>
+  }
+}
+
+' ──────────────────────────────────────────────
+'  ms-geolocation
+' ──────────────────────────────────────────────
+package "ms-geolocation" #EEF6FF {
+
+  entity zonas_busqueda {
+    * id : bigint <<PK>>
+    --
+    * nombre : varchar(200)
+    * latitud_centro : numeric(10,8)
+    * longitud_centro : numeric(11,8)
+    * radio_km : numeric(6,3)
+    * activa : boolean
+    * fecha_creacion : timestamp
+    --
+    * usuario_id : bigint <<FK lógica>>
+  }
+}
+
+' ══════════════════════════════════════════════
+'  Relaciones — FK físicas (continuas)
+' ══════════════════════════════════════════════
+tipos_usuario ||--o{ usuarios          : "clasifica"
+usuarios      ||--o| perfil_persona    : "1 perfil"
+usuarios      ||--o| perfil_organizacion : "1 perfil"
+usuarios      ||--o{ usuario_roles
+roles         ||--o{ usuario_roles
+
+especies      ||--o{ razas             : "agrupa"
+especies      ||--o{ mascotas
+razas         ||--o{ mascotas
+mascotas      ||--o{ mascota_colores
+colores       ||--o{ mascota_colores
+
+mascotas      ||--o{ reportes          : "describe"
+reportes      ||--o{ fotos_reporte     : "tiene fotos"
+
+' ══════════════════════════════════════════════
+'  Relaciones — FK lógicas cross-microservicio (punteadas)
+' ══════════════════════════════════════════════
+usuarios "1" ..o{ "*" reportes         : "<<lógica>>\ncrea"
+usuarios "1" ..o{ "*" notificaciones   : "<<lógica>>\nrecibe"
+usuarios "1" ..o{ "*" zonas_busqueda   : "<<lógica>>\nconfigura"
+
+reportes "1" ..o{ "*" matches          : "<<lógica>>\nperdido_id"
+reportes "1" ..o{ "*" matches          : "<<lógica>>\nencontrado_id"
+reportes "1" ..o{ "*" notificaciones   : "<<lógica>>\nreferencia"
+
+' Leyenda
+legend bottom right
+  |= Símbolo |= Significado |
+  | <b>──</b>           | FK física (gestionada por JPA) |
+  | <b>┄┄</b>           | FK lógica cross-microservicio (sin constraint física) |
+  | <b>||--o{</b>       | uno a muchos |
+  | <b>||--o|</b>       | uno a uno opcional |
+endlegend
+
+@enduml
