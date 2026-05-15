@@ -53,6 +53,12 @@
 			<version>${resilience4j.version}</version>
 		</dependency>
 
+		<!-- Spring Kafka — consume reporte.creado, publica match.encontrado -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
 		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>

@@ -6,6 +6,8 @@ import cl.duocuc.sanossalvos.matchingengine.client.PetManagementClient;
 import cl.duocuc.sanossalvos.matchingengine.dto.MatchResponse;
 import cl.duocuc.sanossalvos.matchingengine.dto.ext.*;
 import cl.duocuc.sanossalvos.matchingengine.exception.MatchNotFoundException;
+import cl.duocuc.sanossalvos.matchingengine.kafka.MatchEventPublisher;
+import cl.duocuc.sanossalvos.matchingengine.kafka.event.MatchEncontradoEvent;
 import cl.duocuc.sanossalvos.matchingengine.model.EstadoMatch;
 import cl.duocuc.sanossalvos.matchingengine.model.Match;
 import cl.duocuc.sanossalvos.matchingengine.repository.MatchRepository;
@@ -30,9 +32,10 @@ public class MatchingService {
 
     private final PetManagementClient petClient;
     private final GeolocationClient   geoClient;
-    private final NotificacionClient  notifClient;
+    private final NotificacionClient  notifClient; // mantenido como fallback legacy
     private final MatchRepository     matchRepository;
     private final PuntuacionService   puntuacionService;
+    private final MatchEventPublisher matchEventPublisher;
 
     /**
      * Busca matches para el reporte dado.
@@ -124,8 +127,14 @@ public class MatchingService {
                 .map(matchRepository::save)
                 .toList();
 
-        // 6. Notificar al dueño del reporte origen
-        matches.forEach(m -> notificar(origen, m));
+        // 6. Notificar a AMBOS dueños del match (origen y candidato)
+        matches.forEach(m -> {
+            Long candidatoId = "PERDIDO".equals(origen.getTipo())
+                    ? m.getReporteEncontradoId()
+                    : m.getReportePerdidoId();
+            ReporteDto candidato = candidatosPorId.get(candidatoId);
+            notificar(origen, candidato, m);
+        });
 
         log.info("Reporte {}: {} matches nuevos encontrados", reporteId, matches.size());
         return matches.stream().map(this::toResponse).toList();
@@ -154,20 +163,45 @@ public class MatchingService {
 
     // ── Privados ─────────────────────────────────────────────────────────────
 
-    private void notificar(ReporteDto origen, Match match) {
-        try {
-            notifClient.crearNotificacion(CrearNotificacionRequest.builder()
-                    .usuarioId(origen.getUsuarioId())
-                    .tipo("MATCH_ENCONTRADO")
-                    .titulo("¡Posible mascota encontrada!")
-                    .mensaje("Se encontró una coincidencia para tu reporte. " +
-                             "Puntuación de similitud: " + match.getPuntuacion() + "/100.")
-                    .reporteId("PERDIDO".equals(origen.getTipo())
-                            ? match.getReportePerdidoId()
-                            : match.getReporteEncontradoId())
-                    .build());
-        } catch (Exception e) {
-            log.warn("No se pudo notificar al usuario {}: {}", origen.getUsuarioId(), e.getMessage());
+    /**
+     * Publica el evento match.encontrado en Kafka para AMBOS dueños del match.
+     * Cada usuario recibe una notificación apuntando al reporte del OTRO lado
+     * (perspectiva natural: "mira el reporte que coincide con el tuyo").
+     * Si los dos reportes son del mismo usuario, se publica solo una vez.
+     */
+    private void notificar(ReporteDto origen, ReporteDto candidato, Match match) {
+        Double distancia = match.getDistanciaKm() != null
+                ? match.getDistanciaKm().doubleValue() : null;
+        double score = match.getPuntuacion();
+        LocalDateTime ahora = LocalDateTime.now();
+
+        // 1. Notificar al dueño del ORIGEN → apunta al CANDIDATO
+        matchEventPublisher.publicarMatchEncontrado(new MatchEncontradoEvent(
+                origen.getId(),
+                candidato != null ? candidato.getId() : null,
+                origen.getUsuarioId(),
+                origen.getEmailContacto(),
+                origen.getNombreMascota(),
+                distancia,
+                score,
+                ahora
+        ));
+
+        // 2. Notificar al dueño del CANDIDATO → apunta al ORIGEN
+        //    (solo si es un usuario distinto, evita doble notif al mismo dueño)
+        if (candidato != null
+                && candidato.getUsuarioId() != null
+                && !candidato.getUsuarioId().equals(origen.getUsuarioId())) {
+            matchEventPublisher.publicarMatchEncontrado(new MatchEncontradoEvent(
+                    candidato.getId(),
+                    origen.getId(),
+                    candidato.getUsuarioId(),
+                    candidato.getEmailContacto(),
+                    candidato.getNombreMascota(),
+                    distancia,
+                    score,
+                    ahora
+            ));
         }
     }
 
