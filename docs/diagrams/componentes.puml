@@ -1,0 +1,138 @@
+@startuml SanosYSalvos-Componentes
+title Sanos y Salvos — Diagrama de Componentes
+skinparam componentStyle rectangle
+skinparam backgroundColor #FAFAF8
+skinparam shadowing false
+skinparam ArrowFontSize 11
+skinparam ArrowColor #555555
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #2E9E60
+  FontColor #1A140E
+}
+skinparam database {
+  BackgroundColor #FFF8EF
+  BorderColor #D4652A
+}
+skinparam queue {
+  BackgroundColor #F3EEFF
+  BorderColor #7C3AED
+}
+skinparam node {
+  BackgroundColor transparent
+  BorderColor #888
+  FontStyle bold
+}
+
+' ─────────────────────────────────────────────────────────
+' Cliente
+' ─────────────────────────────────────────────────────────
+actor "Usuario\n(navegador)" as user
+
+node "Capa de Presentación" as presentacion {
+  component "Frontend\n[React + Vite]\nnginx :5173" as frontend
+}
+
+' ─────────────────────────────────────────────────────────
+' Edge / Aggregation
+' ─────────────────────────────────────────────────────────
+node "Capa de Acceso" as edge {
+  component "API Gateway\n[Spring Cloud Gateway]\n:8080" as gateway
+  component "BFF\n[Spring Boot]\n:8086" as bff
+}
+
+' ─────────────────────────────────────────────────────────
+' Microservicios
+' ─────────────────────────────────────────────────────────
+node "Microservicios" as ms {
+  component "ms-user-auth\n[Spring + JWT]\n:8084" as auth
+  component "ms-pet-management\n[Spring + JPA]\n:8081" as petmgmt
+  component "ms-geolocation\n[Spring + JPA]\n:8082" as geo
+  component "ms-matching-engine\n[Spring + Resilience4j]\n:8083" as matching
+  component "ms-notification\n[Spring + Mail + SSE]\n:8085" as notif
+}
+
+' ─────────────────────────────────────────────────────────
+' Event broker
+' ─────────────────────────────────────────────────────────
+node "Event Broker" as broker {
+  queue "Apache Kafka\n:9092" as kafka
+  component "Zookeeper\n:2181" as zk
+  component "Kafka UI\n:8090" as kui
+}
+
+' Topics dentro de Kafka
+note bottom of kafka
+  <b>Topics:</b>
+  • reporte.creado
+  • avistamiento.registrado
+  • reporte.resuelto
+  • match.encontrado
+end note
+
+' ─────────────────────────────────────────────────────────
+' Persistencia
+' ─────────────────────────────────────────────────────────
+node "Persistencia" as data {
+  database "PostgreSQL\n:5433" as db
+  database "MinIO\n(S3 fotos)\n:9000" as minio
+}
+
+' ═════════════════════════════════════════════════════════
+' Relaciones — HTTP REST (síncronas)
+' ═════════════════════════════════════════════════════════
+user --> frontend : "HTTPS"
+frontend --> gateway : "REST + JWT"
+frontend ..> notif : "<<SSE>>\ntext/event-stream\n?token=..." #1A6BCC
+
+gateway --> auth      : "/api/auth/**"
+gateway --> petmgmt   : "/api/pets/**"
+gateway --> geo       : "/api/geo/**"
+gateway --> matching  : "/api/matching/**"
+gateway --> notif     : "/api/notificaciones/**"
+gateway --> bff       : "/api/bff/**"
+
+bff --> petmgmt   : "REST"
+bff --> geo       : "REST"
+bff --> matching  : "REST"
+bff --> notif     : "REST"
+
+matching --> petmgmt : "REST\n(circuit breaker)"
+matching --> geo     : "REST\n(circuit breaker)"
+
+' ═════════════════════════════════════════════════════════
+' Relaciones — Kafka (asíncronas)
+' ═════════════════════════════════════════════════════════
+petmgmt  ..> kafka : "<<produce>>\nreporte.creado\navistamiento.registrado\nreporte.resuelto" #7C3AED
+kafka    ..> matching : "<<consume>>\nreporte.creado" #7C3AED
+matching ..> kafka : "<<produce>>\nmatch.encontrado" #7C3AED
+kafka    ..> notif : "<<consume>>\nmatch.encontrado\navistamiento.registrado\nreporte.resuelto" #7C3AED
+
+' Infraestructura Kafka
+kafka -- zk : "coord."
+kui --> kafka : "admin"
+
+' ═════════════════════════════════════════════════════════
+' Relaciones — Datos
+' ═════════════════════════════════════════════════════════
+auth     --> db : "JPA/Hibernate"
+petmgmt  --> db : "JPA/Hibernate"
+geo      --> db : "JPA/Hibernate"
+matching --> db : "JPA/Hibernate"
+notif    --> db : "JPA/Hibernate"
+
+petmgmt --> minio : "S3 API\n(fotos mascotas)"
+frontend ..> minio : "GET\n(imágenes públicas)"
+
+' Auth
+notif ..> auth : "JWT\n(valida claim userId)" #aaaaaa
+
+' Leyenda
+legend right
+  |= Tipo de comunicación |= Estilo |
+  |<b>Sync HTTP/REST</b>     | flecha continua |
+  |<b>Async Kafka</b>        | flecha punteada morada |
+  |<b>SSE (push)</b>         | flecha punteada azul |
+endlegend
+
+@enduml
