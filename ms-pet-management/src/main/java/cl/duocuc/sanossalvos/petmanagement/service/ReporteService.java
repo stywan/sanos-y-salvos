@@ -4,6 +4,7 @@ import cl.duocuc.sanossalvos.petmanagement.dto.CambiarEstadoRequest;
 import cl.duocuc.sanossalvos.petmanagement.dto.CrearReporteRequest;
 import cl.duocuc.sanossalvos.petmanagement.dto.ReporteResponse;
 import cl.duocuc.sanossalvos.petmanagement.exception.ReporteNotFoundException;
+import cl.duocuc.sanossalvos.petmanagement.kafka.ReporteEventPublisher;
 import cl.duocuc.sanossalvos.petmanagement.model.*;
 import cl.duocuc.sanossalvos.petmanagement.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class ReporteService {
     private final EspecieRepository especieRepository;
     private final RazaRepository razaRepository;
     private final ColorRepository colorRepository;
+    private final ReporteEventPublisher eventPublisher;
 
     @Transactional
     public ReporteResponse crearReporte(CrearReporteRequest request, Long usuarioId) {
@@ -75,7 +77,9 @@ public class ReporteService {
             reporte.getFotos().add(foto);
         }
 
-        return toResponse(reporteRepository.save(reporte), usuarioId);
+        Reporte saved = reporteRepository.save(reporte);
+        eventPublisher.publicarReporteCreado(saved);
+        return toResponse(saved, usuarioId);
     }
 
     @Transactional(readOnly = true)
@@ -112,10 +116,12 @@ public class ReporteService {
 
     @Transactional
     public ReporteResponse registrarAvistamiento(Long id, Long usuarioId) {
-        Reporte reporte = reporteRepository.findById(id)
+        Reporte reporte = reporteRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new ReporteNotFoundException(id));
         reporte.setEstado(EstadoReporte.RESUELTO);
-        return toResponse(reporteRepository.save(reporte), usuarioId);
+        Reporte saved = reporteRepository.save(reporte);
+        eventPublisher.publicarAvistamiento(saved, usuarioId);
+        return toResponse(saved, usuarioId);
     }
 
     @Transactional
@@ -128,7 +134,11 @@ public class ReporteService {
         }
 
         reporte.setEstado(request.getEstado());
-        return toResponse(reporteRepository.save(reporte), usuarioId);
+        Reporte saved = reporteRepository.save(reporte);
+        if (request.getEstado() == EstadoReporte.RESUELTO) {
+            eventPublisher.publicarReporteResuelto(saved);
+        }
+        return toResponse(saved, usuarioId);
     }
 
     // ── Mapper interno ─────────────────────────────────────────────────────
