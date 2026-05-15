@@ -3,6 +3,7 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Logo } from '../ui/Logo';
 import { Button } from '../ui/Button';
 import { Icon } from '../ui/Icon';
+import { NotificationBell } from '../ui/NotificationBell';
 import { useAuth } from '../../features/auth/hooks';
 import s from './Nav.module.css';
 
@@ -64,6 +65,7 @@ export function Nav() {
             <Button size="sm" onClick={() => navigate('/report/lost')}>
               Reportar perdido
             </Button>
+            <NotificationBell />
             <div className={s.avatarWrap} ref={profileRef}>
               <button
                 className={s.avatarBtn}
