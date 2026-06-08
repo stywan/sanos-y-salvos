@@ -16,6 +16,7 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.js',
+    css: false,   // CSS modules → {} en tests, evita mockear cada .module.css
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],

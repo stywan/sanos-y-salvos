@@ -3,8 +3,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Button } from '../Button';
 
-// Button.module.css → importación CSS no disponible en jsdom: Vitest la mockea como objeto vacío
-vi.mock('../Button.module.css', () => ({ default: {} }));
 
 describe('Button', () => {
   it('renderiza el texto del children', () => {
