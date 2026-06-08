@@ -146,6 +146,34 @@ class NotificacionServiceTest {
                 .isInstanceOf(NotificacionNotFoundException.class);
     }
 
+    @Test
+    void marcarComoLeida_yaLeida_noGuardaDeNuevo() {
+        notifEjemplo.setLeida(true);
+        when(notificacionRepository.findById(1L)).thenReturn(Optional.of(notifEjemplo));
+
+        service.marcarComoLeida(1L, 10L);
+
+        verify(notificacionRepository, never()).save(any());
+    }
+
+    // ── crearNotificacion: email en blanco no envía correo ─────────────────
+
+    @Test
+    void crearNotificacion_emailEnBlanco_noEnviaCorreo() {
+        when(notificacionRepository.save(any())).thenReturn(notifEjemplo);
+
+        CrearNotificacionRequest req = new CrearNotificacionRequest();
+        req.setUsuarioId(10L);
+        req.setTipo(TipoNotificacion.MATCH_ENCONTRADO);
+        req.setTitulo("Match");
+        req.setMensaje("Mensaje");
+        req.setEmailDestino("   "); // no blank pero isBlank() = true
+
+        service.crearNotificacion(req);
+
+        verifyNoInteractions(emailService);
+    }
+
     // ── marcarTodasComoLeidas ─────────────────────────────────────────────────
 
     @Test

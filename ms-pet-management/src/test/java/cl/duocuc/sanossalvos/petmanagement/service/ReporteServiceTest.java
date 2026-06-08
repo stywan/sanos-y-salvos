@@ -166,6 +166,99 @@ class ReporteServiceTest {
                 .hasMessageContaining("permiso");
     }
 
+    // ── Listar reportes ────────────────────────────────────────────────────
+
+    @Test
+    void listarReportes_sinFiltros_retornaTodasLasEntradas() {
+        when(reporteRepository.findAll()).thenReturn(List.of(buildReporte(1L, 10L)));
+
+        List<ReporteResponse> resp = reporteService.listarReportes(null, null, null);
+
+        assertThat(resp).hasSize(1);
+        verify(reporteRepository).findAll();
+    }
+
+    @Test
+    void listarReportes_porTipoYEstado_llamaMetodoCorrecto() {
+        when(reporteRepository.findByTipoAndEstado(TipoReporte.PERDIDO, EstadoReporte.ACTIVO))
+                .thenReturn(List.of(buildReporte(2L, 10L)));
+
+        List<ReporteResponse> resp = reporteService.listarReportes(TipoReporte.PERDIDO, EstadoReporte.ACTIVO, null);
+
+        assertThat(resp).hasSize(1);
+        verify(reporteRepository).findByTipoAndEstado(TipoReporte.PERDIDO, EstadoReporte.ACTIVO);
+    }
+
+    @Test
+    void listarReportes_soloPorTipo_llamaFindByTipo() {
+        when(reporteRepository.findByTipo(TipoReporte.PERDIDO)).thenReturn(List.of());
+
+        List<ReporteResponse> resp = reporteService.listarReportes(TipoReporte.PERDIDO, null, 1L);
+
+        assertThat(resp).isEmpty();
+        verify(reporteRepository).findByTipo(TipoReporte.PERDIDO);
+    }
+
+    @Test
+    void listarReportes_soloPorEstado_llamaFindByEstado() {
+        when(reporteRepository.findByEstado(EstadoReporte.ACTIVO)).thenReturn(List.of());
+
+        List<ReporteResponse> resp = reporteService.listarReportes(null, EstadoReporte.ACTIVO, 1L);
+
+        assertThat(resp).isEmpty();
+        verify(reporteRepository).findByEstado(EstadoReporte.ACTIVO);
+    }
+
+    // ── Listar por usuario ─────────────────────────────────────────────────
+
+    @Test
+    void listarPorUsuario_retornaReportesDelUsuario() {
+        when(reporteRepository.findByUsuarioId(10L)).thenReturn(List.of(buildReporte(1L, 10L)));
+
+        List<ReporteResponse> resp = reporteService.listarPorUsuario(10L);
+
+        assertThat(resp).hasSize(1);
+        assertThat(resp.get(0).getUsuarioId()).isEqualTo(10L);
+    }
+
+    // ── Registrar avistamiento ─────────────────────────────────────────────
+
+    @Test
+    void registrarAvistamiento_existente_marcaResuelto() {
+        Reporte r = buildReporte(1L, 10L);
+        when(reporteRepository.findByIdWithDetails(1L)).thenReturn(Optional.of(r));
+        when(reporteRepository.save(any())).thenReturn(r);
+
+        ReporteResponse resp = reporteService.registrarAvistamiento(1L, 99L);
+
+        assertThat(resp.getEstado()).isEqualTo(EstadoReporte.RESUELTO);
+        verify(eventPublisher).publicarAvistamiento(any(), eq(99L));
+    }
+
+    @Test
+    void registrarAvistamiento_noExistente_lanzaExcepcion() {
+        when(reporteRepository.findByIdWithDetails(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> reporteService.registrarAvistamiento(99L, 10L))
+                .isInstanceOf(ReporteNotFoundException.class);
+    }
+
+    @Test
+    void cambiarEstado_aActivo_noPublicaEventoResuelto() {
+        Reporte reporte = buildReporte(1L, 10L);
+        reporte.setEstado(EstadoReporte.RESUELTO);
+        when(reporteRepository.findById(1L)).thenReturn(Optional.of(reporte));
+        when(reporteRepository.save(any())).thenReturn(reporte);
+
+        CambiarEstadoRequest req = new CambiarEstadoRequest();
+        req.setEstado(EstadoReporte.ACTIVO);
+
+        ReporteResponse resp = reporteService.cambiarEstado(1L, req, 10L);
+
+        assertThat(resp.getEstado()).isEqualTo(EstadoReporte.ACTIVO);
+        verify(eventPublisher, never()).publicarReporteResuelto(any());
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────────
 
     private CrearReporteRequest buildRequest(TipoReporte tipo, Long razaId) {

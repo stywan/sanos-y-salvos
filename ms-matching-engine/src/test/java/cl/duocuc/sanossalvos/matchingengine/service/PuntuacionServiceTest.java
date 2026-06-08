@@ -114,6 +114,28 @@ class PuntuacionServiceTest {
         assertThat(service.puntosGenero("DESCONOCIDO", "DESCONOCIDO")).isEqualTo(0);
     }
 
+    @Test
+    void generoA_null_retornaCero() {
+        assertThat(service.puntosGenero(null, "MACHO")).isEqualTo(0);
+    }
+
+    @Test
+    void generoB_null_retornaCero() {
+        assertThat(service.puntosGenero("MACHO", null)).isEqualTo(0);
+    }
+
+    // ── Colores B null / vacío ────────────────────────────────────────────────
+
+    @Test
+    void coloresB_null_retornaCero() {
+        assertThat(service.puntosColores(List.of("Negro"), null)).isEqualTo(0);
+    }
+
+    @Test
+    void coloresB_vacio_retornaCero() {
+        assertThat(service.puntosColores(List.of("Negro"), List.of())).isEqualTo(0);
+    }
+
     // ── helper ────────────────────────────────────────────────────────────────
 
     private ReporteDto reporte(String especie, String genero, List<String> colores) {
