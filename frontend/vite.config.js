@@ -19,7 +19,7 @@ export default defineConfig({
     css: false,   // CSS modules → {} en tests, evita mockear cada .module.css
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html', 'lcov'],
+      reporter: ['text', 'json-summary', 'json', 'html', 'lcov'],
       include: ['src/**/*.{js,jsx}'],
       exclude: [
         'src/main.jsx',
