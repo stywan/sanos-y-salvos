@@ -12,4 +12,21 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.js',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html', 'lcov'],
+      include: ['src/**/*.{js,jsx}'],
+      exclude: [
+        'src/main.jsx',
+        'src/test/**',
+        'src/**/__tests__/**',
+      ],
+      // Thresholds se activarán cuando haya más tests escritos
+      // thresholds: { lines: 60, functions: 60 },
+    },
+  },
 })
