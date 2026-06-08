@@ -4,6 +4,8 @@ import cl.duocuc.sanossalvos.userauth.dto.LoginRequest;
 import cl.duocuc.sanossalvos.userauth.dto.RegisterRequest;
 import cl.duocuc.sanossalvos.userauth.dto.AuthResponse;
 import cl.duocuc.sanossalvos.userauth.exception.EmailYaRegistradoException;
+import cl.duocuc.sanossalvos.userauth.model.PerfilOrganizacion;
+import cl.duocuc.sanossalvos.userauth.model.PerfilPersona;
 import cl.duocuc.sanossalvos.userauth.model.Role;
 import cl.duocuc.sanossalvos.userauth.model.TipoUsuario;
 import cl.duocuc.sanossalvos.userauth.model.Usuario;
@@ -21,6 +23,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -154,6 +157,53 @@ class AuthServiceTest {
         assertThat(response.getNombreDisplay()).isEqualTo("Refugio Esperanza");
         verify(perfilOrganizacionRepository).save(any());
         verify(perfilPersonaRepository, never()).save(any());
+    }
+
+    // ── getMe ─────────────────────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("getMe: usuario con perfilPersona retorna nombre completo")
+    void getMe_conPerfilPersona_retornaNombreCompleto() {
+        PerfilPersona perfil = PerfilPersona.builder()
+                .id(1L).nombre("Juan").apellido("Pérez").telefono("912345678").build();
+        usuarioMock.setPerfilPersona(perfil);
+
+        when(usuarioRepository.findByEmailWithAll("juan@test.com"))
+                .thenReturn(Optional.of(usuarioMock));
+
+        var resp = authService.getMe("juan@test.com");
+
+        assertThat(resp.getNombreDisplay()).isEqualTo("Juan Pérez");
+        assertThat(resp.getNombre()).isEqualTo("Juan");
+    }
+
+    @Test
+    @DisplayName("getMe: usuario con perfilOrganizacion retorna nombre organización")
+    void getMe_conPerfilOrganizacion_retornaNombreOrg() {
+        PerfilOrganizacion perfil = PerfilOrganizacion.builder()
+                .id(1L).nombreOrganizacion("Refugio Esperanza")
+                .descripcion("Refugio").direccion("Calle 1").build();
+        Usuario orgUser = Usuario.builder()
+                .id(2L).email("juan@test.com").password("encoded").activo(true)
+                .tipoUsuario(tipoPersona).roles(Set.of(roleUser))
+                .perfilOrganizacion(perfil).build();
+
+        when(usuarioRepository.findByEmailWithAll("juan@test.com"))
+                .thenReturn(Optional.of(orgUser));
+
+        var resp = authService.getMe("juan@test.com");
+
+        assertThat(resp.getNombreDisplay()).isEqualTo("Refugio Esperanza");
+        assertThat(resp.getNombreOrganizacion()).isEqualTo("Refugio Esperanza");
+    }
+
+    @Test
+    @DisplayName("getMe: usuario no encontrado lanza UsernameNotFoundException")
+    void getMe_noEncontrado_lanzaExcepcion() {
+        when(usuarioRepository.findByEmailWithAll("x@x.com")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> authService.getMe("x@x.com"))
+                .isInstanceOf(UsernameNotFoundException.class);
     }
 
     // ── Login ─────────────────────────────────────────────────────────────────
